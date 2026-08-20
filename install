@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+src="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/AGENTS.md"
+dst="$HOME/.claude/CLAUDE.md"
+
+if [ -L "$dst" ] && [ "$(readlink "$dst")" = "$src" ]; then
+	echo "already linked: $dst -> $src"
+	exit 0
+fi
+
+if [ -e "$dst" ] || [ -L "$dst" ]; then
+	echo "refusing to replace $dst" >&2
+	exit 1
+fi
+
+mkdir -p "$(dirname "$dst")"
+ln -s "$src" "$dst"
+echo "linked: $dst -> $src"
