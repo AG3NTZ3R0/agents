@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+repo=https://github.com/github/spec-kit
+paths=(
+	spec-driven.md
+	README.md
+	AGENTS.md
+	docs/toc.yml
+	templates
+	workflows/README.md
+	workflows/ARCHITECTURE.md
+	workflows/speckit
+)
+
+tag=$(specify version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | awk 'NR==1{print "v" $0}' || true)
+[ -n "$tag" ] || tag=$(git ls-remote --tags --refs --sort=-v:refname "$repo" 'v*' | awk -F/ 'NR==1{print $NF}')
+
+tmp=$(mktemp -d)
+trap 'rm -rf "$tmp"' EXIT
+
+git clone -q --depth 1 --branch "$tag" --filter=blob:none --sparse "$repo" "$tmp/spec-kit" 2>/dev/null
+git -C "$tmp/spec-kit" sparse-checkout set --no-cone "${paths[@]/#//}"
+
+out=$(mktemp "${TMPDIR:-/tmp}/speckit-$tag.XXXXXX.md")
+for p in "${paths[@]}"; do
+	[ -e "$tmp/spec-kit/$p" ] || { echo "missing at $tag: $p" >&2; rm -f "$out"; exit 1; }
+	find "$tmp/spec-kit/$p" -type f | sort | while read -r f; do
+		printf '\n===== %s@%s:%s =====\n\n' "$repo" "$tag" "${f#"$tmp/spec-kit/"}"
+		cat "$f"
+	done
+done >"$out"
+
+echo "$out"
