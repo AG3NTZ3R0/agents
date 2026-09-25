@@ -2,16 +2,30 @@
 set -euo pipefail
 
 repo=github/spec-kit
+
+# Ordered as upstream presents the product: what it is, why, its primitives,
+# their internals, then the processes an agent runs. docs/toc.yml closes the
+# document as the index of everything left out.
 paths=(
+	docs/index.md
+	docs/history.md
+	docs/concepts/sdd.md
 	spec-driven.md
-	README.md
-	AGENTS.md
-	docs/toc.yml
-	templates
-	workflows/README.md
+	docs/reference/overview.md
+	docs/reference/core.md
+	docs/reference/integrations.md
+	docs/reference/extensions.md
+	docs/reference/presets.md
+	docs/reference/artifacts.md
+	docs/reference/workflows.md
+	docs/reference/bundles.md
 	workflows/ARCHITECTURE.md
-	workflows/speckit
+	presets/ARCHITECTURE.md
+	docs/reference/agentic-sdd.md
+	docs/reference/agentic-bugfix.md
+	docs/reference/agentic-assessment.md
 )
+index=docs/toc.yml
 
 installed() { specify version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | awk 'NR==1{print "v" $0}' || true; }
 
@@ -20,8 +34,14 @@ was=$(installed)
 
 if [ -z "$was" ]; then
 	echo "specify is not installed; see https://github.com/$repo#readme" >&2
-elif [ "$was" != "$latest" ]; then
-	specify self upgrade >&2 || echo "specify self upgrade failed; still on $was" >&2
+else
+	if [ "$was" != "$latest" ]; then
+		specify self upgrade >&2 || echo "specify self upgrade failed; still on $was" >&2
+	fi
+	if [ -d .specify ]; then
+		specify integration upgrade >&2 || echo "specify integration upgrade failed in $PWD" >&2
+		specify extension update >&2 || echo "specify extension update failed in $PWD" >&2
+	fi
 fi
 now=$(installed)
 
@@ -29,11 +49,18 @@ tmp=$(mktemp -d)
 trap 'rm -rf "$tmp"' EXIT
 
 git clone -q --depth 1 --branch "$latest" --filter=blob:none --sparse "https://github.com/$repo" "$tmp/spec-kit" 2>/dev/null
-git -C "$tmp/spec-kit" sparse-checkout set --no-cone "${paths[@]/#//}"
+git -C "$tmp/spec-kit" sparse-checkout set --no-cone "${paths[@]/#//}" "/$index"
 
-out=$(mktemp "${TMPDIR:-/tmp}/speckit-$latest.XXXXXX.md")
+section() {
+	[ -f "$tmp/spec-kit/$1" ] || { echo "missing at $latest: $1" >&2; exit 1; }
+	printf '\n===== https://github.com/%s@%s:%s =====\n\n' "$repo" "$latest" "$1"
+	cat "$tmp/spec-kit/$1"
+}
+
 {
 	printf '===== specify: installed %s, now %s, latest %s =====\n' "${was:-none}" "${now:-none}" "$latest"
+
+	for p in "${paths[@]}"; do section "$p"; done
 
 	if [ -n "$was" ] && [ "$was" != "$latest" ]; then
 		for t in $(gh api "repos/$repo/releases?per_page=100" --jq '.[] | select(.prerelease | not) | .tag_name'); do
@@ -43,13 +70,9 @@ out=$(mktemp "${TMPDIR:-/tmp}/speckit-$latest.XXXXXX.md")
 		done
 	fi
 
-	for p in "${paths[@]}"; do
-		[ -e "$tmp/spec-kit/$p" ] || { echo "missing at $latest: $p" >&2; exit 1; }
-		find "$tmp/spec-kit/$p" -type f | sort | while read -r f; do
-			printf '\n===== https://github.com/%s@%s:%s =====\n\n' "$repo" "$latest" "${f#"$tmp/spec-kit/"}"
-			cat "$f"
-		done
-	done
-} >"$out" || { rm -f "$out"; exit 1; }
+	section "$index"
+} >"$tmp/doc"
 
+out=$(mktemp "${TMPDIR:-/tmp}/speckit-$latest.XXXXXX.md")
+mv "$tmp/doc" "$out"
 echo "$out"
