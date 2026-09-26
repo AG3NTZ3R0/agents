@@ -19,7 +19,8 @@ When the current directory holds `.specify/`, it then brings the project
 current:
 
 - `specify integration upgrade --force` replaces the project's Spec Kit
-  commands, templates, and scripts with the release's. Specs, the
+  commands, templates, and scripts with the release's, when the version its
+  integration manifest records is not the installed CLI's. Specs, the
   constitution, and code are left alone.
 - `specify extension update` updates installed extensions.
 - `specify extension add` adds each bundled extension the project lacks.

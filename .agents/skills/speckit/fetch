@@ -17,8 +17,14 @@ else
 		specify self upgrade >&2 || echo "specify self upgrade failed; still on $was" >&2
 	fi
 	if [ -d .specify ]; then
-		# Replaces managed templates, commands, and scripts with the release's.
-		specify integration upgrade --force >&2 || echo "specify integration upgrade failed in $PWD" >&2
+		# Replaces managed templates, commands, and scripts with the release's,
+		# only when the release that last wrote them is not the installed one,
+		# since every upgrade rewrites the manifest's install time.
+		integration=$(grep -oE '"(default_)?integration": "[^"]+"' .specify/integration.json 2>/dev/null | tail -1 | cut -d'"' -f4) || true
+		project=$(grep -oE '"version": "[^"]+"' ".specify/integrations/$integration.manifest.json" 2>/dev/null | head -1 | cut -d'"' -f4) || true
+		if [ "v$project" != "$(installed)" ]; then
+			specify integration upgrade --force >&2 || echo "specify integration upgrade failed in $PWD" >&2
+		fi
 		specify extension update >&2 || echo "specify extension update failed in $PWD" >&2
 		# Adds each bundled extension the project lacks.
 		bundled=$("$here/bundled") || echo "could not list bundled extensions; none were added in $PWD" >&2
