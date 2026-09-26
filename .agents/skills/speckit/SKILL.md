@@ -43,9 +43,6 @@ What Claude remembers of Spec Kit MUST NOT be the source of any answer.
   not cover it.
 - Commands and flags MUST be confirmed with `specify <command> --help`, which
   governs where it and the documentation disagree.
-- Contributor documentation outside `docs/toc.yml` and `spec-driven.md`
-  (`design/`, `AGENTS.md`, `CONTRIBUTING.md`, `*/ARCHITECTURE.md`) MUST NOT be
-  used unless the user asks about Spec Kit's internals.
 
 ## Reporting
 
