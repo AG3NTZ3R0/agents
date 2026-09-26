@@ -34,6 +34,15 @@ else
 			grep -qxF "$e" <<<"$have" && continue
 			specify extension add "$e" >&2 || echo "specify extension add $e failed in $PWD" >&2
 		done
+		specify workflow update >&2 || echo "specify workflow update failed in $PWD" >&2
+		# Adds each bundled workflow the project lacks.
+		bundled=$("$here/bundled" workflows) || echo "could not list bundled workflows; none were added in $PWD" >&2
+		have=$(specify workflow list | grep -oE '\([a-z0-9-]+\) v' | tr -d '() v') ||
+			echo "specify workflow list failed in $PWD" >&2
+		for w in ${bundled:-}; do
+			grep -qxF "$w" <<<"$have" && continue
+			specify workflow add "$w" >&2 || echo "specify workflow add $w failed in $PWD" >&2
+		done
 	fi
 fi
 now=$(installed)

@@ -24,6 +24,8 @@ current:
   constitution, and code are left alone.
 - `specify extension update` updates installed extensions.
 - `specify extension add` adds each bundled extension the project lacks.
+- `specify workflow update` updates installed workflows.
+- `specify workflow add` adds each bundled workflow the project lacks.
 
 Customizations to Spec Kit's behavior MUST go in a preset, never in the
 managed files.
