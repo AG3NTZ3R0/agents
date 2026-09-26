@@ -18,7 +18,9 @@ It upgrades the installed `specify` CLI when it trails the latest release.
 When the current directory holds `.specify/`, it then runs `specify
 integration upgrade` and `specify extension update` there, which refresh the
 project's Spec Kit commands and templates and leave its specs, constitution,
-and code alone.
+and code alone, and `specify extension add` for each extension the running
+release bundles that the project lacks, so every bundled extension is
+installed by default.
 
 It then syncs `docs/` and `spec-driven.md` from `github/spec-kit` at the latest
 release into a cache directory named for that tag, and prints the versions,
