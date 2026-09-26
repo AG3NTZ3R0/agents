@@ -1,19 +1,29 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-src="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/AGENTS.md"
-dst="$HOME/.claude/CLAUDE.md"
+here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-if [ -L "$dst" ] && [ "$(readlink "$dst")" = "$src" ]; then
-	echo "already linked: $dst -> $src"
-	exit 0
-fi
+link() {
+	local src="$1" dst="$2"
 
-if [ -e "$dst" ] || [ -L "$dst" ]; then
-	echo "refusing to replace $dst" >&2
-	exit 1
-fi
+	if [ -L "$dst" ] && [ "$(readlink "$dst")" = "$src" ]; then
+		echo "already linked: $dst -> $src"
+		return
+	fi
 
-mkdir -p "$(dirname "$dst")"
-ln -s "$src" "$dst"
-echo "linked: $dst -> $src"
+	if [ -e "$dst" ] || [ -L "$dst" ]; then
+		echo "refusing to replace $dst" >&2
+		exit 1
+	fi
+
+	mkdir -p "$(dirname "$dst")"
+	ln -s "$src" "$dst"
+	echo "linked: $dst -> $src"
+}
+
+link "$here/AGENTS.md" "$HOME/.claude/CLAUDE.md"
+
+for skill in "$here"/.agents/skills/*/; do
+	skill="${skill%/}"
+	link "$skill" "$HOME/.claude/skills/$(basename "$skill")"
+done

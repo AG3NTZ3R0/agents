@@ -7,9 +7,9 @@ description: >-
 
 # RFC
 
-Run `fetch` with the RFC number alone:
+Run `fetch`, which sits beside this file, with the RFC number alone:
 
-    .agents/skills/rfc/fetch 2119
+    <this skill's directory>/fetch 2119
 
 It retrieves `https://www.rfc-editor.org/rfc/rfc<number>.txt`, writes it
 verbatim to `rfc/rfc<number>.txt`, and prints the path. It writes nothing and

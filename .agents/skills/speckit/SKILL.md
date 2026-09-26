@@ -9,9 +9,10 @@ description: >-
 
 # Spec Kit
 
-Run `fetch` with no arguments, from the project directory when there is one:
+Run `fetch`, which sits beside this file, with no arguments and from the
+project directory when there is one:
 
-    .agents/skills/speckit/fetch
+    <this skill's directory>/fetch
 
 It upgrades the installed `specify` CLI when it trails the latest release.
 When the current directory holds `.specify/`, it then runs `specify
