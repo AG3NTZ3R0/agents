@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 repo=github/spec-kit
 root="${XDG_CACHE_HOME:-$HOME/.cache}/speckit"
 
@@ -19,14 +20,10 @@ else
 		specify integration upgrade >&2 || echo "specify integration upgrade failed in $PWD" >&2
 		specify extension update >&2 || echo "specify extension update failed in $PWD" >&2
 		# Every extension the running release bundles is installed by default.
-		py=$(head -1 "$(command -v specify)" | sed 's/^#! *//')
-		missing=$(specify extension list --json | "$py" -c '
-import json, pathlib, sys, specify_cli
-have = {e["id"] for e in json.load(sys.stdin)}
-d = pathlib.Path(specify_cli.__file__).parent / "core_pack" / "extensions"
-print(*sorted(p.name for p in d.iterdir() if (p / "extension.yml").is_file() and p.name not in have))
-') || echo "could not list bundled extensions in $PWD" >&2
-		for e in $missing; do
+		have=$(specify extension list --json | grep -oE '"id": "[^"]+"' | cut -d'"' -f4) ||
+			echo "specify extension list failed in $PWD" >&2
+		for e in $("$here/bundled"); do
+			grep -qxF "$e" <<<"$have" && continue
 			specify extension add "$e" >&2 || echo "specify extension add $e failed in $PWD" >&2
 		done
 	fi

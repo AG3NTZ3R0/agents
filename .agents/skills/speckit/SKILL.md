@@ -31,6 +31,18 @@ behind, and `docs/toc.yml`.
 relative to `docs/`. `spec-driven.md` is the full methodology the README
 points users to. Together they are the documentation this skill covers.
 
+## Initializing a project
+
+To set up Spec Kit in a project, Claude MUST run `init`, which sits beside this
+file, from the project directory with the integration for the agent running
+it, and MUST NOT run `specify init` itself:
+
+    <this skill's directory>/init claude
+
+`init` runs `specify init --here` non-interactively with every bundled
+extension, then `fetch`. In a project that already holds `.specify/`, it only
+runs `fetch`.
+
 ## Precedence
 
 What Claude remembers of Spec Kit MUST NOT be the source of any answer.

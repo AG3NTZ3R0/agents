@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+if [ $# -ne 1 ]; then
+	echo "usage: init <integration>" >&2
+	exit 2
+fi
+
+# An initialized project is only brought current, never initialized again.
+if [ ! -d .specify ]; then
+	args=()
+	for e in $("$here/bundled"); do
+		args+=(--extension "$e")
+	done
+	specify init --here --force --non-interactive --integration "$1" "${args[@]}" >&2
+fi
+
+exec "$here/fetch"
