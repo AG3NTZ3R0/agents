@@ -1,0 +1,181 @@
+#!/usr/bin/env python3
+"""Prints Shape Up's index, or one of its chapters, as text.
+
+With no argument, prints each part, each chapter's slug and title, and each
+section's slug and anchor, read from the book's contents page. With a slug
+from the index, prints that chapter, with each heading's anchor. The book is
+not revised, so each page is fetched once and cached.
+"""
+
+import html
+import html.parser
+import os
+import pathlib
+import re
+import subprocess
+import sys
+
+BOOK = "https://basecamp.com/shapeup"
+CACHE = pathlib.Path(os.environ.get("XDG_CACHE_HOME") or pathlib.Path.home() / ".cache") / "shapeup"
+SLUG = re.compile(r"^[0-9]+\.[0-9]+-[a-z0-9-]+$")
+
+
+def download(url):
+    # The site refuses Python's own HTTP client, so the page is fetched with curl.
+    got = subprocess.run(["curl", "-fsSL", url], capture_output=True, text=True)
+    if got.returncode:
+        sys.exit(f"could not fetch {url}: {got.stderr.strip()}")
+    return got.stdout
+
+
+def clean(fragment):
+    return re.sub(r"\s+", " ", html.unescape(re.sub(r"<[^>]+>", "", fragment))).strip()
+
+
+def index(page):
+    """Renders the contents page as one line per part, chapter, and section."""
+    lines, number = [], ""
+    for kind, body in re.findall(
+        r'class="(toc__part-title[^"]*|toc__chapter-number|toc__chapter-title|toc__section)"[^>]*>(.*?)</(?:h2|p|h3|li)>',
+        page,
+        re.S,
+    ):
+        href = re.search(r'href="/shapeup/([^"]+)"', body)
+        if kind.startswith("toc__part-title"):
+            lines.append(f"\n## {clean(body)}\n")
+        elif kind == "toc__chapter-number":
+            number = clean(body)
+        elif kind == "toc__chapter-title":
+            title = clean(body)
+            lines.append(f"{href[1]}  {number + ': ' if number else ''}{title}")
+            number = ""
+        elif href:
+            lines.append(f"    {href[1]}  {clean(body)}")
+    return "\n".join(lines).strip()
+
+
+class Chapter(html.parser.HTMLParser):
+    """Renders a chapter's title and body as Markdown-like text."""
+
+    BLOCKS = {"p", "li", "h1", "h2", "h3", "h4", "figcaption", "blockquote", "dt", "dd"}
+    SKIP = {"template", "svg", "script", "style", "nav"}
+
+    def __init__(self):
+        super().__init__(convert_charrefs=True)
+        self.out, self.line, self.stack, self.lists = [], [], [], []
+        self.anchor = None
+
+    def keep(self):
+        # Only the chapter's masthead, title, and body; never the sidebar
+        # contents, glossary, or anything skipped.
+        classes = [c for _, c in self.stack]
+        body = any("content" in c for c in classes) or any(
+            c & {"intro__masthead", "intro__title"} for c in classes
+        )
+        return body and not any(t in self.SKIP for t, _ in self.stack)
+
+    def emit(self):
+        text = re.sub(r"\s+", " ", "".join(self.line)).strip()
+        self.line = []
+        if text.strip("-#>0123456789. *"):
+            self.out.append(text)
+
+    def handle_starttag(self, tag, attrs):
+        a = dict(attrs)
+        if tag in ("img", "br", "hr", "meta", "link", "source", "input"):
+            if tag == "img" and self.keep() and a.get("alt"):
+                self.out.append(f"[Image: {a['alt'].strip()}]")
+            return
+        self.stack.append((tag, set((a.get("class") or "").split())))
+        if not self.keep():
+            return
+        if tag in ("ul", "ol"):
+            self.lists.append([tag, 1])
+        elif tag in self.BLOCKS:
+            if self.line:
+                self.emit()
+            if tag in ("h1", "h2", "h3", "h4"):
+                self.line.append("#" * int(tag[1]) + " ")
+                self.anchor = a.get("id")
+            elif tag == "li" and self.lists:
+                kind = self.lists[-1]
+                self.line.append("  " * (len(self.lists) - 1) + (f"{kind[1]}. " if kind[0] == "ol" else "- "))
+                kind[1] += 1
+            elif tag == "blockquote":
+                self.line.append("> ")
+            elif tag == "figcaption":
+                self.line.append("Caption: ")
+            elif tag == "dt":
+                self.line.append("**")
+        elif tag in ("strong", "b"):
+            self.line.append("**")
+        elif tag in ("em", "i"):
+            self.line.append("*")
+        elif tag == "code":
+            self.line.append("`")
+
+    def handle_endtag(self, tag):
+        if not any(t == tag for t, _ in self.stack):
+            return
+        kept = False
+        while self.stack:
+            kept = self.keep()
+            if self.stack.pop()[0] == tag:
+                break
+        if not kept:
+            return
+        if tag in ("ul", "ol") and self.lists:
+            self.lists.pop()
+        elif tag in self.BLOCKS:
+            if tag == "dt":
+                self.line.append("**")
+            if tag in ("h2", "h3", "h4") and self.anchor:
+                self.line.append(f" {{#{self.anchor}}}")
+            self.anchor = None
+            self.emit()
+        elif tag in ("strong", "b"):
+            self.line.append("**")
+        elif tag in ("em", "i"):
+            self.line.append("*")
+        elif tag == "code":
+            self.line.append("`")
+
+    def handle_data(self, data):
+        if self.keep():
+            self.line.append(data)
+
+
+def page(slug):
+    """Returns the index, or a chapter, as text, from the cache when it holds it."""
+    cached = CACHE / f"{slug or 'index'}.md"
+    if cached.is_file():
+        return cached.read_text()
+    url = f"{BOOK}/{slug}" if slug else BOOK
+    source = download(url)
+    if slug:
+        parser = Chapter()
+        parser.feed(source)
+        parser.close()
+        body = "\n\n".join(parser.out)
+    else:
+        body = index(source)
+    if not body:
+        sys.exit(f"found no text at {url}")
+    text = f"Shape Up, by Ryan Singer: {url}\n\n{body}\n"
+    CACHE.mkdir(parents=True, exist_ok=True)
+    tmp = cached.with_suffix(".tmp")
+    tmp.write_text(text)
+    tmp.replace(cached)
+    return text
+
+
+def main(args):
+    if len(args) > 1 or (args and not SLUG.match(args[0])):
+        sys.exit("usage: fetch [chapter-slug]")
+    if args and not re.search(rf"^{re.escape(args[0])}  ", page(None), re.M):
+        sys.exit(f"{args[0]} is not a chapter in the index; run fetch with no argument to list them")
+    sys.stdout.write(page(args[0] if args else None))
+
+
+if __name__ == "__main__":
+    main(sys.argv[1:])
