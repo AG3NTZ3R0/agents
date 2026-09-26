@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# install links this skill into ~/.claude/skills/, so its real path leads
+# back to the clone on whatever machine this runs on.
+repo="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/../../.." && pwd)"
+git=(git -C "$repo")
+
+branch=$("${git[@]}" branch --show-current)
+[ "$branch" = main ] || { echo "$repo is on $branch, not main; not syncing" >&2; exit 1; }
+"${git[@]}" diff --quiet && "${git[@]}" diff --cached --quiet ||
+	{ echo "$repo has uncommitted changes; not syncing" >&2; exit 1; }
+
+before=$("${git[@]}" rev-parse HEAD)
+"${git[@]}" pull -q --ff-only
+after=$("${git[@]}" rev-parse HEAD)
+
+"$repo/install"
+
+echo
+echo "environment: $repo"
+if [ "$before" = "$after" ]; then
+	echo "already current at $("${git[@]}" rev-parse --short HEAD)"
+else
+	"${git[@]}" log --oneline "$before..$after"
+	"${git[@]}" diff --name-status "$before..$after" -- AGENTS.md .agents/skills
+fi
