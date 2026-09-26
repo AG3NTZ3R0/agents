@@ -1,0 +1,2 @@
+# Spec Kit's catalog caches are downloaded on demand and expire after an hour.
+.specify/**/.cache/
