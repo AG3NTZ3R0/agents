@@ -8,28 +8,8 @@ A project's own principles are its constitution, kept in that project at
 `.specify/memory/constitution.md`.
 
 The agentic software development lifecycle is Spec-Driven Development as Spec
-Kit defines it, under the authorities below. An authority is a source taken
-over what an agent remembers.
+Kit defines it. Spec Kit is an authority: a source taken over what an agent
+remembers. It changes with each release, so the `speckit` skill retrieves its
+user documentation at the latest one.
 
-## Fixed authorities
-
-A fixed authority does not change once published. It is vendored here as
-published.
-
-### RFC 2119 — Key words for use in RFCs to Indicate Requirement Levels
-
-@rfc/rfc2119.txt
-
-### RFC 8174 — Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words
-
-@rfc/rfc8174.txt
-
-## Living authorities
-
-A living authority changes with each release. It is never vendored; its skill
-retrieves it at its latest release.
-
-### Spec Kit — github/spec-kit
-
-Spec Kit defines Spec-Driven Development and the `specify` CLI. The `speckit`
-skill retrieves its user documentation.
+A requirement's level is stated in the key words of RFC 2119, in capitals.

@@ -23,10 +23,6 @@ link() {
 
 link "$here/AGENTS.md" "$HOME/.claude/CLAUDE.md"
 
-# A skill linked into this repository's .claude/skills/ maintains this
-# repository alone, so it is not installed.
 for skill in "$here"/.agents/skills/*/; do
-	name="$(basename "$skill")"
-	[ -e "$here/.claude/skills/$name" ] && continue
-	link "${skill%/}" "$HOME/.claude/skills/$name"
+	link "${skill%/}" "$HOME/.claude/skills/$(basename "$skill")"
 done
