@@ -2,30 +2,7 @@
 set -euo pipefail
 
 repo=github/spec-kit
-
-# Ordered as upstream presents the product: what it is, why, its primitives,
-# their internals, then the processes an agent runs. docs/toc.yml closes the
-# document as the index of everything left out.
-paths=(
-	docs/index.md
-	docs/history.md
-	docs/concepts/sdd.md
-	spec-driven.md
-	docs/reference/overview.md
-	docs/reference/core.md
-	docs/reference/integrations.md
-	docs/reference/extensions.md
-	docs/reference/presets.md
-	docs/reference/artifacts.md
-	docs/reference/workflows.md
-	docs/reference/bundles.md
-	workflows/ARCHITECTURE.md
-	presets/ARCHITECTURE.md
-	docs/reference/agentic-sdd.md
-	docs/reference/agentic-bugfix.md
-	docs/reference/agentic-assessment.md
-)
-index=docs/toc.yml
+root="${XDG_CACHE_HOME:-$HOME/.cache}/speckit"
 
 installed() { specify version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | awk 'NR==1{print "v" $0}' || true; }
 
@@ -45,34 +22,29 @@ else
 fi
 now=$(installed)
 
-tmp=$(mktemp -d)
-trap 'rm -rf "$tmp"' EXIT
+# A release never changes, so its docs are cached under its tag and every
+# other tag is dropped.
+cache="$root/$latest"
+if [ ! -f "$cache/docs/toc.yml" ]; then
+	tmp=$(mktemp -d)
+	trap 'rm -rf "$tmp"' EXIT
+	git clone -q --depth 1 --branch "$latest" --filter=blob:none --sparse "https://github.com/$repo" "$tmp/spec-kit" 2>/dev/null
+	git -C "$tmp/spec-kit" sparse-checkout set --no-cone /docs/ /spec-driven.md
+	rm -rf "$tmp/spec-kit/.git" "$root"
+	mkdir -p "$root"
+	mv "$tmp/spec-kit" "$cache"
+fi
 
-git clone -q --depth 1 --branch "$latest" --filter=blob:none --sparse "https://github.com/$repo" "$tmp/spec-kit" 2>/dev/null
-git -C "$tmp/spec-kit" sparse-checkout set --no-cone "${paths[@]/#//}" "/$index"
+printf 'specify: installed %s, now %s, latest %s\n' "${was:-none}" "${now:-none}" "$latest"
+printf 'docs: %s\n' "$cache"
 
-section() {
-	[ -f "$tmp/spec-kit/$1" ] || { echo "missing at $latest: $1" >&2; exit 1; }
-	printf '\n===== https://github.com/%s@%s:%s =====\n\n' "$repo" "$latest" "$1"
-	cat "$tmp/spec-kit/$1"
-}
+if [ -n "$was" ] && [ "$was" != "$latest" ]; then
+	for t in $(gh api "repos/$repo/releases?per_page=100" --jq '.[] | select(.prerelease | not) | .tag_name'); do
+		[ "$t" != "$was" ] && [ "$(printf '%s\n' "$was" "$t" | sort -V | tail -1)" = "$t" ] || continue
+		printf '\n===== release notes %s =====\n\n' "$t"
+		gh release view "$t" -R "$repo" --json body --jq .body
+	done
+fi
 
-{
-	printf '===== specify: installed %s, now %s, latest %s =====\n' "${was:-none}" "${now:-none}" "$latest"
-
-	for p in "${paths[@]}"; do section "$p"; done
-
-	if [ -n "$was" ] && [ "$was" != "$latest" ]; then
-		for t in $(gh api "repos/$repo/releases?per_page=100" --jq '.[] | select(.prerelease | not) | .tag_name'); do
-			[ "$t" != "$was" ] && [ "$(printf '%s\n' "$was" "$t" | sort -V | tail -1)" = "$t" ] || continue
-			printf '\n===== release notes %s =====\n\n' "$t"
-			gh release view "$t" -R "$repo" --json body --jq .body
-		done
-	fi
-
-	section "$index"
-} >"$tmp/doc"
-
-out=$(mktemp "${TMPDIR:-/tmp}/speckit-$latest.XXXXXX.md")
-mv "$tmp/doc" "$out"
-echo "$out"
+printf '\n===== docs/toc.yml =====\n\n'
+cat "$cache/docs/toc.yml"
