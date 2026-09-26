@@ -7,11 +7,12 @@ Requires `git`, `curl`, and an authenticated `gh`.
     ./install
 
 `install` symlinks `AGENTS.md` to `~/.claude/CLAUDE.md` and each skill in
-`.agents/skills/` to `~/.claude/skills/<name>`. It is safe to rerun, and it
-refuses to replace a file already at either location.
+`.agents/skills/` to `~/.claude/skills/<name>`. It is safe to rerun, repairs
+links left by a moved clone, removes links to deleted skills, and refuses to
+replace anything else.
 
-The links point into the clone, so `git pull` updates every session. A skill
-added upstream needs `./install` again.
+After that, the `environment` skill keeps it current: ask Claude to update its
+environment.
 
 `specify` is not required up front: the `speckit` skill reports when it is
 missing and has Spec Kit's installation guide at hand.
