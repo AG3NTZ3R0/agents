@@ -11,8 +11,8 @@ Requires `git`, `curl`, and an authenticated `gh`.
 links left by a moved clone, removes links to deleted skills, and refuses to
 replace anything else.
 
-After that, the `environment` skill keeps it current: ask Claude to update its
-environment.
+After that, the `environment` skill keeps it current: ask the agent to update
+its environment.
 
 `specify` is not required up front: the `speckit` skill reports when it is
 missing and has Spec Kit's installation guide at hand.

@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 repo=github/spec-kit
 root="${XDG_CACHE_HOME:-$HOME/.cache}/speckit"
 
@@ -16,8 +17,17 @@ else
 		specify self upgrade >&2 || echo "specify self upgrade failed; still on $was" >&2
 	fi
 	if [ -d .specify ]; then
-		specify integration upgrade >&2 || echo "specify integration upgrade failed in $PWD" >&2
+		# Replaces managed templates, commands, and scripts with the release's.
+		specify integration upgrade --force >&2 || echo "specify integration upgrade failed in $PWD" >&2
 		specify extension update >&2 || echo "specify extension update failed in $PWD" >&2
+		# Adds each bundled extension the project lacks.
+		bundled=$("$here/bundled") || echo "could not list bundled extensions; none were added in $PWD" >&2
+		have=$(specify extension list --json | grep -oE '"id": "[^"]+"' | cut -d'"' -f4) ||
+			echo "specify extension list failed in $PWD" >&2
+		for e in ${bundled:-}; do
+			grep -qxF "$e" <<<"$have" && continue
+			specify extension add "$e" >&2 || echo "specify extension add $e failed in $PWD" >&2
+		done
 	fi
 fi
 now=$(installed)
