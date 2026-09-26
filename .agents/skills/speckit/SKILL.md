@@ -15,13 +15,16 @@ project directory when there is one:
     <this skill's directory>/fetch
 
 It upgrades the installed `specify` CLI when it trails the latest release.
-When the current directory holds `.specify/`, it then runs `specify
-integration upgrade --force` and `specify extension update` there, which
-overwrite the project's Spec Kit commands, templates, and scripts with the
-release's and leave its specs, constitution, and code alone, and `specify
-extension add` for each extension the running release bundles that the
-project lacks, so every bundled extension is installed and current.
-Customizations to Spec Kit's behavior MUST go in a preset, never in those
+When the current directory holds `.specify/`, it then brings the project
+current:
+
+- `specify integration upgrade --force` replaces the project's Spec Kit
+  commands, templates, and scripts with the release's. Specs, the
+  constitution, and code are left alone.
+- `specify extension update` updates installed extensions.
+- `specify extension add` adds each bundled extension the project lacks.
+
+Customizations to Spec Kit's behavior MUST go in a preset, never in the
 managed files.
 
 It then syncs `docs/` and `spec-driven.md` from `github/spec-kit` at the latest
