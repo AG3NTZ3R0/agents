@@ -1,10 +1,14 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Prints each extension the installed specify release bundles, one per line.
+# Prints each extension the installed specify release bundles, one per line,
+# and fails when it finds none, since the package layout is not a public API.
 py=$(head -1 "$(command -v specify)" | sed 's/^#! *//')
 "$py" -c '
-import pathlib, specify_cli
+import pathlib, sys, specify_cli
 d = pathlib.Path(specify_cli.__file__).parent / "core_pack" / "extensions"
-print(*sorted(p.name for p in d.iterdir() if (p / "extension.yml").is_file()), sep="\n")
+names = sorted(p.name for p in d.glob("*") if (p / "extension.yml").is_file())
+if not names:
+    sys.exit(f"no bundled extensions found under {d}")
+print(*names, sep="\n")
 '

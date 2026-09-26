@@ -4,7 +4,7 @@ description: >-
   Use for every question or task that involves Spec Kit (github/spec-kit) or
   the specify CLI. Upgrades specify and the current project's Spec Kit files,
   then syncs Spec Kit's user documentation at the latest release, since what
-  Claude remembers of Spec Kit is out of date.
+  the agent remembers of Spec Kit is out of date.
 ---
 
 # Spec Kit
@@ -16,11 +16,13 @@ project directory when there is one:
 
 It upgrades the installed `specify` CLI when it trails the latest release.
 When the current directory holds `.specify/`, it then runs `specify
-integration upgrade` and `specify extension update` there, which refresh the
-project's Spec Kit commands and templates and leave its specs, constitution,
-and code alone, and `specify extension add` for each extension the running
-release bundles that the project lacks, so every bundled extension is
-installed by default.
+integration upgrade --force` and `specify extension update` there, which
+overwrite the project's Spec Kit commands, templates, and scripts with the
+release's and leave its specs, constitution, and code alone, and `specify
+extension add` for each extension the running release bundles that the
+project lacks, so every bundled extension is installed and current.
+Customizations to Spec Kit's behavior MUST go in a preset, never in those
+managed files.
 
 It then syncs `docs/` and `spec-driven.md` from `github/spec-kit` at the latest
 release into a cache directory named for that tag, and prints the versions,
@@ -33,11 +35,11 @@ points users to. Together they are the documentation this skill covers.
 
 ## Initializing a project
 
-To set up Spec Kit in a project, Claude MUST run `init`, which sits beside this
-file, from the project directory with the integration for the agent running
-it, and MUST NOT run `specify init` itself:
+To set up Spec Kit in a project, the agent MUST run `init`, which sits beside
+this file, from the project directory with its own Spec Kit integration, such
+as `claude` for Claude Code, and MUST NOT run `specify init` itself:
 
-    <this skill's directory>/init claude
+    <this skill's directory>/init <integration>
 
 `init` runs `specify init --here` non-interactively with every bundled
 extension, then `fetch`. In a project that already holds `.specify/`, it only
@@ -45,22 +47,22 @@ runs `fetch`.
 
 ## Precedence
 
-What Claude remembers of Spec Kit MUST NOT be the source of any answer.
+What the agent remembers of Spec Kit MUST NOT be the source of any answer.
 
-- Every question about Spec Kit MUST be answered from pages Claude reads from
-  the cache in the same turn. A page read in an earlier turn MUST be read
+- Every question about Spec Kit MUST be answered from pages the agent reads
+  from the cache in the same turn. A page read in an earlier turn MUST be read
   again.
-- Claude MUST read `docs/index.md` and `docs/reference/overview.md` the first
-  time it uses this skill in a session, and MUST choose further pages from
-  `docs/toc.yml`.
-- Every claim about Spec Kit MUST cite `path:line@tag`. A claim that cannot be
-  cited MUST NOT be made; Claude MUST say the documentation at that tag does
-  not cover it.
+- The agent MUST read `docs/index.md` and `docs/reference/overview.md` the
+  first time it uses this skill in a session, and MUST choose further pages
+  from `docs/toc.yml`.
+- Every claim about Spec Kit MUST cite `path:line@tag`. A claim that cannot
+  be cited MUST NOT be made; the agent MUST say the documentation at that tag
+  does not cover it.
 - Commands and flags MUST be confirmed with `specify <command> --help`, which
   governs where it and the documentation disagree.
 
 ## Reporting
 
-Claude MUST report any upgrade `fetch` performed or failed to perform. When it
-printed release notes, Claude MUST name the versions the CLI moved between and
-summarize what those releases added or changed.
+The agent MUST report any upgrade `fetch` performed or failed to perform.
+When it printed release notes, the agent MUST name the versions the CLI moved
+between and summarize what those releases added or changed.
