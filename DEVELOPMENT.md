@@ -21,5 +21,6 @@ MUST be split into one of each.
 
 An authority MUST NOT be stored here in any form; its skill retrieves it.
 
-A skill lives in `.agents/skills/<name>/`, MUST name its files relative to its
-own directory, and is linked by `install` into every session.
+A skill lives in `.agents/skills/<name>/`, which `.claude/skills` links to,
+MUST name its files relative to its own directory, and is linked by `install`
+into every session.
