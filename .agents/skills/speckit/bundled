@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Prints each extension the installed specify release bundles, one per line,
-# and fails when it finds none, since the package layout is not a public API.
+# Prints each extension the installed specify release bundles, one per line.
+# specify has no command that lists bundled extensions, so they are read from
+# where the package ships them. That location is internal and may move in a
+# later release, so finding none is an error rather than an empty list.
 py=$(head -1 "$(command -v specify)" | sed 's/^#! *//')
 "$py" -c '
 import pathlib, sys, specify_cli
