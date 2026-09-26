@@ -1,11 +1,8 @@
 # Agentic Software Development Lifecycle
 
-The RFCs vendored here constrain the agentic software development lifecycle.
+The environment an agent carries into every repository it works in.
+`./install` links `AGENTS.md` and each skill in `.agents/skills/` in at the
+user level, so no project repository holds a copy.
 
-## RFC 2119 — Key words for use in RFCs to Indicate Requirement Levels
-
-@rfc/rfc2119.txt
-
-## RFC 8174 — Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words
-
-@rfc/rfc8174.txt
+The lifecycle is Spec-Driven Development as Spec Kit defines it. A project's
+own principles are its constitution, kept in that project.

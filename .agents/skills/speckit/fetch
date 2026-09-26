@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+repo=github/spec-kit
+root="${XDG_CACHE_HOME:-$HOME/.cache}/speckit"
+
+installed() { specify version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | awk 'NR==1{print "v" $0}' || true; }
+
+latest=$(gh api "repos/$repo/releases/latest" --jq .tag_name)
+was=$(installed)
+
+if [ -z "$was" ]; then
+	echo "specify is not installed; see https://github.com/$repo#readme" >&2
+else
+	if [ "$was" != "$latest" ]; then
+		specify self upgrade >&2 || echo "specify self upgrade failed; still on $was" >&2
+	fi
+	if [ -d .specify ]; then
+		specify integration upgrade >&2 || echo "specify integration upgrade failed in $PWD" >&2
+		specify extension update >&2 || echo "specify extension update failed in $PWD" >&2
+	fi
+fi
+now=$(installed)
+
+# A release never changes, so its docs are cached under its tag and every
+# other tag is dropped.
+cache="$root/$latest"
+if [ ! -f "$cache/docs/toc.yml" ]; then
+	tmp=$(mktemp -d)
+	trap 'rm -rf "$tmp"' EXIT
+	git clone -q --depth 1 --branch "$latest" --filter=blob:none --sparse "https://github.com/$repo" "$tmp/spec-kit" 2>/dev/null
+	git -C "$tmp/spec-kit" sparse-checkout set --no-cone /docs/ /spec-driven.md
+	rm -rf "$tmp/spec-kit/.git" "$root"
+	mkdir -p "$root"
+	mv "$tmp/spec-kit" "$cache"
+fi
+
+printf 'specify: installed %s, now %s, latest %s\n' "${was:-none}" "${now:-none}" "$latest"
+printf 'docs: %s\n' "$cache"
+
+if [ -n "$was" ] && [ "$was" != "$latest" ]; then
+	for t in $(gh api "repos/$repo/releases?per_page=100" --jq '.[] | select(.prerelease | not) | .tag_name'); do
+		[ "$t" != "$was" ] && [ "$(printf '%s\n' "$was" "$t" | sort -V | tail -1)" = "$t" ] || continue
+		printf '\n===== release notes %s =====\n\n' "$t"
+		gh release view "$t" -R "$repo" --json body --jq .body
+	done
+fi
+
+printf '\n===== docs/toc.yml =====\n\n'
+cat "$cache/docs/toc.yml"

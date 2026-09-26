@@ -1,3 +1,4 @@
-Claude MUST write plans in RFC 2119 keywords, capitalized per RFC 8174.
+Claude MUST write plans in capitalized RFC 2119 key words.
 
-@README.md
+Claude MUST answer every question about Spec Kit or `specify` through the
+`speckit` skill, and MUST NOT answer it from memory.

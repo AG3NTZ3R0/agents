@@ -4,7 +4,4 @@ set -euo pipefail
 n="${1-}"
 [[ "$n" =~ ^[0-9]+$ ]] || { echo "usage: fetch <rfc-number>" >&2; exit 1; }
 
-out="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)/rfc/rfc$n.txt"
-
-curl -fsS "https://www.rfc-editor.org/rfc/rfc$n.txt" -o "$out"
-echo "$out"
+curl -fsS "https://www.rfc-editor.org/rfc/rfc$n.txt"
