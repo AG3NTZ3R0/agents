@@ -1,14 +1,25 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Lists the extensions the installed specify release bundles, one per line,
-# read from the package itself; fails when it finds none.
+# Lists the extensions, or with `workflows` the workflows, the installed
+# specify release bundles, one per line, read from the package itself; fails
+# when it finds none.
+kind=${1:-extensions}
+case "$kind" in
+extensions) manifest=extension.yml ;;
+workflows) manifest=workflow.yml ;;
+*)
+	echo "usage: bundled [extensions|workflows]" >&2
+	exit 2
+	;;
+esac
 py=$(head -1 "$(command -v specify)" | sed 's/^#! *//')
 "$py" -c '
 import pathlib, sys, specify_cli
-d = pathlib.Path(specify_cli.__file__).parent / "core_pack" / "extensions"
-names = sorted(p.name for p in d.glob("*") if (p / "extension.yml").is_file())
+kind, manifest = sys.argv[1:]
+d = pathlib.Path(specify_cli.__file__).parent / "core_pack" / kind
+names = sorted(p.name for p in d.glob("*") if (p / manifest).is_file())
 if not names:
-    sys.exit(f"no bundled extensions found under {d}")
+    sys.exit(f"no bundled {kind} found under {d}")
 print(*names, sep="\n")
-'
+' "$kind" "$manifest"
