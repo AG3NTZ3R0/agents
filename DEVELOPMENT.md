@@ -1,26 +1,30 @@
 # Development
 
-Terminology is defined before requirements are stated, and requirements use
-the key words of RFC 2119.
+This repository is written once and used everywhere. `install` links its
+instructions and skills in at the user level of each machine it is cloned
+onto, so every session in every repository starts with them. That decides what
+may be added here.
 
-What `install` links is present in every session, so it MUST hold in every
-repository an agent works in. A statement true in one repository alone is
-false in the rest; it MUST NOT be added here, and belongs in that repository's
-constitution.
+A statement belongs here only if it holds in every repository an agent works
+in. One that holds in a single repository would be false in all the others, so
+it MUST NOT be added here; it belongs in that repository's constitution.
 
-`README.md` MUST define and MUST NOT instruct. It states what this repository
-and the agentic software development lifecycle are, and names each authority
-and convention they rest on.
+Terms are defined before requirements are stated, and requirements use the key
+words of RFC 2119.
 
-`AGENTS.md` MUST instruct and MUST NOT define. It states what Claude does, in
-the vocabulary `README.md` establishes, and it MUST reference `README.md`.
+## Files
 
-A statement that says what something is belongs in `README.md`. A statement
-that says what Claude does belongs in `AGENTS.md`. A statement that does both
-MUST be split into one of each.
+`README.md` states what this repository and the agentic software development
+lifecycle are. `AGENTS.md` states what Claude does, in the terms `README.md`
+defines, and references it. `README.md` MUST NOT instruct and `AGENTS.md` MUST
+NOT define; a statement that does both MUST be split into one of each.
 
-An authority MUST NOT be stored here in any form; its skill retrieves it.
+## Skills
 
-A skill lives in `.agents/skills/<name>/`, which `.claude/skills` links to,
-MUST name its files relative to its own directory, and is linked by `install`
-into every session.
+A skill lives in `.agents/skills/<name>/`. `.claude/skills` links there so
+skills are available while working here, and `install` links each one into
+every session. A skill runs from whatever repository an agent is in, so it
+MUST name its files relative to its own directory.
+
+Documentation that changes upstream MUST NOT be copied here, because a copy
+goes stale; a skill retrieves it at its current version.
