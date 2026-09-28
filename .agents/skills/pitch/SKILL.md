@@ -42,21 +42,30 @@ did not give or agree to.
 
 ## Draft
 
-The agent MUST show the user the full issue before filing it: a title that
-names the idea in a few words, and this body:
+`template.md`, which sits beside this file, is the contract for every pitch's
+body. The agent MUST copy it and replace each `{{...}}` placeholder with the
+content the placeholder describes.
 
-    ## Problem
+- The agent MUST keep every heading and bold field, in the template's order
+  and spelled exactly as it spells them, and MUST NOT add, rename, or remove
+  any.
+- The `Size` field MUST be exactly one of the three sizes the template lists.
+- A numbered or bulleted placeholder MUST become a list of that kind, one item
+  per element, risk, or exclusion.
+- An optional field or section with nothing in it MUST read
+  `None identified.`
+- The body MUST NOT quote the book.
 
-    ## Appetite
+The title MUST read `Pitch: <idea>`, where `<idea>` names the idea in a few
+words.
 
-    ## Solution
+The agent MUST write the body to a temporary file and run `check`, which sits
+beside this file, on it:
 
-    ## Rabbit holes
+    <this skill's directory>/check <body-file>
 
-    ## No-gos
-
-An optional section with nothing in it MUST read `None identified.` The body
-MUST NOT quote the book.
+It MUST fix the body until `check` passes, then show the user the title and
+full body before filing.
 
 ## File
 
@@ -68,7 +77,6 @@ and show it again for any change the user asks for.
 2. When `gh label list --search pitch` shows no `pitch` label, the agent MUST
    ask the user before running
    `gh label create pitch --description "Shape Up pitch"`.
-3. The agent MUST file with
-   `gh issue create --title "<title>" --label pitch --body-file <file>`,
-   writing the body to a temporary file, and MUST give the user the issue's
-   URL.
+3. The agent MUST rerun `check` on the approved body, then file with
+   `gh issue create --title "<title>" --label pitch --body-file <body-file>`,
+   and MUST give the user the issue's URL.
