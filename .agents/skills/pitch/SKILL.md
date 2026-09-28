@@ -34,10 +34,12 @@ time:
 - **Rabbit holes**: OPTIONAL. Risky details, with how the pitch settles each.
 - **No-gos**: OPTIONAL. What the pitch deliberately leaves out.
 
-The agent MUST NOT draft the issue until the problem, appetite, and solution
-are all filled. It SHOULD point out when the solution will not fit the
-appetite or does not answer the problem. It MUST NOT invent content the user
-did not give or agree to.
+The agent MUST NOT draft the issue until every REQUIRED ingredient is filled.
+It MUST derive each OPTIONAL ingredient from the conversation, and when it
+finds none, MUST state why in the pitch. It SHOULD point out when the
+ingredients do not fit each other, such as a solution too big for the
+appetite or one that does not answer the problem. It MUST NOT add anything
+the conversation did not raise.
 
 ## Draft
 
@@ -52,7 +54,7 @@ content the placeholder describes.
 - A numbered or bulleted placeholder MUST become a list of that kind, one item
   per element, risk, or exclusion.
 - An optional field or section with nothing in it MUST read
-  `None identified.`
+  `None identified: <reason>.`, where the reason says why the pitch has none.
 - The body MUST NOT quote the book.
 
 The title MUST read `Pitch: <idea>`, where `<idea>` names the idea in a few

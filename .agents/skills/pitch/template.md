@@ -20,12 +20,12 @@
 
 **After:** {{The Today story again, told with this solution in place.}}
 
-**Left open:** {{Details the builders decide, such as layout, naming, or implementation. Or: None identified.}}
+**Left open:** {{Details the builders decide, such as layout, naming, or implementation. Or: None identified: why the pitch has none.}}
 
 ## Rabbit holes
 
-{{- **Risk**: how the pitch settles it. One bullet per risk. Or: None identified.}}
+{{- **Risk**: how the pitch settles it. One bullet per risk. Or: None identified: why the pitch has none.}}
 
 ## No-gos
 
-{{- **Excluded**: why it is out, to fit the appetite or keep the problem tractable. One bullet per exclusion. Or: None identified.}}
+{{- **Excluded**: why it is out, to fit the appetite or keep the problem tractable. One bullet per exclusion. Or: None identified: why the pitch has none.}}
