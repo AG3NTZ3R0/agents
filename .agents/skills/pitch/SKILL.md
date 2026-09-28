@@ -15,10 +15,9 @@ can read before deciding whether to bet on it.
 
 ## Ground in the book
 
-The agent MUST load the `shapeup` skill and fetch `1.5-chapter-06` before
-drafting, and MUST judge each ingredient against that chapter rather than
-against memory. It MAY fetch the chapters on appetite (`1.2-chapter-03`) or
-rabbit holes (`1.4-chapter-05`) when an ingredient needs more.
+The agent MUST load the `shapeup` skill, fetch `1.5-chapter-06`, and judge
+each ingredient against it. When an ingredient needs more, the agent MUST use
+the `shapeup` skill to find it.
 
 ## Fill the ingredients
 
