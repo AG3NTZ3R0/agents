@@ -53,8 +53,9 @@ content the placeholder describes.
 - The `Size` field MUST be exactly one of the three sizes the template lists.
 - A numbered or bulleted placeholder MUST become a list of that kind, one item
   per element, risk, or exclusion.
-- An optional field or section with nothing in it MUST read
-  `None identified: <reason>.`, where the reason says why the pitch has none.
+- An OPTIONAL ingredient, or the `Left open` field, with nothing in it MUST
+  read `None identified: <reason>.`, where the reason says why the pitch has
+  none.
 - The body MUST NOT quote the book.
 
 The title MUST read `Pitch: <idea>`, where `<idea>` names the idea in a few
@@ -65,8 +66,9 @@ beside this file, on it:
 
     <this skill's directory>/check <body-file>
 
-It MUST fix the body until `check` passes, then show the user the title and
-full body before filing.
+It MUST fix the body until `check` passes, then show the user the title, the
+full body, and a list of anything it added that the conversation did not
+raise, before filing.
 
 ## File
 
