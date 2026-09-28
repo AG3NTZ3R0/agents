@@ -38,7 +38,7 @@ The agent MUST NOT draft the issue until every REQUIRED ingredient is filled.
 It MUST derive each OPTIONAL ingredient from the conversation, and when it
 finds none, MUST state why in the pitch. It SHOULD point out when the
 ingredients do not fit each other, such as a solution too big for the
-appetite or one that does not answer the problem. It MUST NOT add anything
+appetite or one that does not answer the problem, and anything it added that
 the conversation did not raise.
 
 ## Draft
