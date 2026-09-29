@@ -24,3 +24,9 @@ Spec Kit is the vehicle that performs the work. It gives a coding agent
 "structured processes that keep intent and evidence ahead of implementation",
 starting with Spec-Driven Development. A project's own principles are its
 constitution, kept in that project.
+
+## License
+
+This repository is released under the [MIT License](LICENSE). The files
+Spec Kit generates, in `.specify/` and the `speckit-*` skills, remain
+copyright GitHub, Inc. under Spec Kit's own MIT License.
