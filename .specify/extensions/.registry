@@ -1,20 +1,6 @@
 {
   "schema_version": "1.0",
   "extensions": {
-    "agent-context": {
-      "version": "1.0.1",
-      "source": "local",
-      "manifest_hash": "sha256:132bcd2b1ab7a1e61e5072682340e0a7fef0d6aa815d4c42ac168cceb01e6308",
-      "enabled": true,
-      "priority": 10,
-      "registered_commands": {
-        "claude": [
-          "speckit.agent-context.update"
-        ]
-      },
-      "registered_skills": [],
-      "installed_at": "2026-09-26T01:52:01.089955+00:00"
-    },
     "assess": {
       "version": "1.0.1",
       "source": "local",
@@ -66,6 +52,37 @@
       },
       "registered_skills": [],
       "installed_at": "2026-09-26T01:52:01.149345+00:00"
+    },
+    "github": {
+      "version": "1.0.0",
+      "source": "local",
+      "manifest_hash": "sha256:4645e3b053b7218e4f22066f0d2f625b1ca44c7838879a39a3977cfa2f3f12b3",
+      "enabled": true,
+      "priority": 10,
+      "registered_commands": {
+        "claude": [
+          "speckit.github.taskstoissues"
+        ]
+      },
+      "registered_skills": [],
+      "installed_at": "2026-09-29T23:44:19.861111+00:00"
+    },
+    "agent-context": {
+      "version": "1.0.2",
+      "source": {
+        "kind": "catalog",
+        "catalog": "default"
+      },
+      "manifest_hash": "sha256:270100175bb742c37b8d549f2233c5b79114869dac754883dbecac2a4813beef",
+      "enabled": true,
+      "priority": 10,
+      "registered_commands": {
+        "claude": [
+          "speckit.agent-context.update"
+        ]
+      },
+      "registered_skills": [],
+      "installed_at": "2026-09-26T01:52:01.089955+00:00"
     }
   }
 }

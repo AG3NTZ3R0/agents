@@ -3,18 +3,11 @@ installed:
 - assess
 - bug
 - git
+- github
 settings:
   auto_execute_hooks: true
 hooks:
   after_specify:
-  - extension: agent-context
-    command: speckit.agent-context.update
-    enabled: true
-    optional: true
-    priority: 10
-    prompt: Execute speckit.agent-context.update?
-    description: Refresh agent context after specification
-    condition: null
   - extension: git
     command: speckit.git.commit
     enabled: true
@@ -23,15 +16,15 @@ hooks:
     prompt: Commit specification changes?
     description: Auto-commit after specification
     condition: null
-  after_plan:
   - extension: agent-context
     command: speckit.agent-context.update
     enabled: true
     optional: true
     priority: 10
     prompt: Execute speckit.agent-context.update?
-    description: Refresh agent context after planning
+    description: Refresh agent context after specification
     condition: null
+  after_plan:
   - extension: git
     command: speckit.git.commit
     enabled: true
@@ -39,6 +32,14 @@ hooks:
     priority: 10
     prompt: Commit plan changes?
     description: Auto-commit after implementation planning
+    condition: null
+  - extension: agent-context
+    command: speckit.agent-context.update
+    enabled: true
+    optional: true
+    priority: 10
+    prompt: Execute speckit.agent-context.update?
+    description: Refresh agent context after planning
     condition: null
   before_constitution:
   - extension: git
