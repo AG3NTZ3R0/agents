@@ -47,7 +47,6 @@ steps:
     input:
       args: "{{ inputs.spec }}"
 
-  # speckit.tasks asks nothing, so its check only confirms tasks.md exists.
   - id: check-speckit-tasks
     type: shell
     run: bash "$SPECKIT_WORKFLOW_DIR/check" tasks
