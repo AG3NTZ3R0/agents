@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # Fails when a step's output is missing (exit 2) or still needs a human
 # (exit 1): NEEDS CLARIFICATION markers, which a headless agent leaves behind
-# instead of asking, or unchecked boxes in the spec's quality checklist.
+# instead of asking, unchecked boxes in the spec's quality checklist, or tasks
+# implement left unfinished.
 set -uo pipefail
 
 . .specify/scripts/bash/common.sh
@@ -44,8 +45,12 @@ plan)
 tasks)
 	require "$TASKS"
 	;;
+implement)
+	require "$TASKS"
+	unchecked "$TASKS"
+	;;
 *)
-	echo "usage: check spec|plan|tasks" >&2
+	echo "usage: check spec|plan|tasks|implement" >&2
 	exit 2
 	;;
 esac

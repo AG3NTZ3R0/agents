@@ -4,7 +4,7 @@ workflow:
   name: "Guarded SDD Cycle"
   version: "0.1.0"
   author: "AG3NTZ3R0"
-  description: "Runs specify → plan → tasks, stopping after specify and plan when NEEDS CLARIFICATION markers remain"
+  description: "Runs specify → plan → tasks → implement, stopping after any step that leaves work for a human"
 
 requires:
   speckit_version: ">=1.0.13"
@@ -50,3 +50,13 @@ steps:
   - id: check-speckit-tasks
     type: shell
     run: bash "$SPECKIT_WORKFLOW_DIR/check" tasks
+
+  - id: speckit-implement
+    command: speckit.implement
+    integration: "{{ inputs.integration }}"
+    input:
+      args: "{{ inputs.spec }}"
+
+  - id: check-speckit-implement
+    type: shell
+    run: bash "$SPECKIT_WORKFLOW_DIR/check" implement
