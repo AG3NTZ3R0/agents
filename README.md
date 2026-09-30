@@ -25,8 +25,10 @@ Spec Kit is the vehicle that performs the work. It gives a coding agent
 starting with Spec-Driven Development. A project's own principles are its
 constitution, kept in that project.
 
+`workflows/` holds Spec Kit workflows to install into a project with
+`specify workflow add --dev workflows/<id>`. This repository is not a Spec Kit
+project itself; see [DEVELOPMENT.md](DEVELOPMENT.md).
+
 ## License
 
-This repository is released under the [MIT License](LICENSE). The files
-Spec Kit generates, in `.specify/` and the `speckit-*` skills, remain
-copyright GitHub, Inc. under Spec Kit's own MIT License.
+This repository is released under the [MIT License](LICENSE).

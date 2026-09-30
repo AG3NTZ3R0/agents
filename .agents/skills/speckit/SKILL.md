@@ -26,6 +26,9 @@ current:
 - `specify extension add` adds each bundled extension the project lacks.
 - `specify workflow update` updates installed workflows.
 - `specify workflow add` adds each bundled workflow the project lacks.
+- `specify workflow add --dev` adds each workflow in the agents clone's
+  `workflows/`, such as `guarded-sdd`, and re-adds one whose installed copy
+  differs from the clone's.
 
 Customizations to Spec Kit's behavior MUST go in a preset, never in the
 managed files.

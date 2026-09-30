@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+# Lists this Spec Kit project's guarded-sdd runs that need you, and opens an
+# interactive Claude session on the one you pick: to resolve a failed or
+# paused run so it can resume, or to review a completed run's code.
+set -euo pipefail
+
+[ -d .specify ] || { echo "not a Spec Kit project: no .specify/ here" >&2; exit 2; }
+
+runs=()
+while IFS= read -r id; do
+	runs+=("$id")
+done < <(specify workflow status --json |
+	jq -r '.runs[] | select(.workflow_id == "guarded-sdd")
+		| select(.status == "paused" or .status == "failed" or .status == "completed")
+		| .run_id')
+
+if [ "${#runs[@]}" -eq 0 ]; then
+	echo "no guarded-sdd runs need you"
+	exit 0
+fi
+
+state() { cat ".specify/workflows/runs/$1/state.json"; }
+
+for i in "${!runs[@]}"; do
+	state "${runs[$i]}" | jq -r --arg n "$((i + 1))" \
+		'"\($n)) \(.run_id)  \(.status) at \(.current_step_id // "-")"'
+done
+
+read -rp "open which? " n
+[[ "$n" =~ ^[0-9]+$ ]] && [ "$n" -ge 1 ] && [ "$n" -le "${#runs[@]}" ] ||
+	{ echo "no such run: $n" >&2; exit 2; }
+id="${runs[$((n - 1))]}"
+status=$(state "$id" | jq -r .status)
+
+if [ "$status" = completed ]; then
+	ask="It finished, so review the code it wrote: walk me through what changed against the feature spec and answer my questions. Do not commit, push, or open a review unless I ask."
+else
+	ask="Rerun that check to see what it found, walk me through resolving it, and tell me when the run is ready for \`specify workflow resume $id\`."
+fi
+
+prompt="$(state "$id" | jq -r \
+	'"Spec Kit workflow run \(.run_id) (\(.workflow_id)) is \(.status) at step \(.current_step_id // "-")."')
+
+This is a Guarded SDD run: each check-speckit-* step stops the run when the step before it left work for a human.
+
+$ask"
+
+claude "$prompt"
+
+[ "$status" = completed ] || echo "resume with: specify workflow resume $id"

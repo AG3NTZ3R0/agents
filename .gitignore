@@ -1,4 +1,0 @@
-# Spec Kit's catalog caches are downloaded on demand and expire after an hour.
-.specify/**/.cache/
-# Spec Kit's workflow installer leaves an empty lock file behind.
-.specify/.workflow-install.lock
