@@ -28,6 +28,14 @@
       "url": "https://raw.githubusercontent.com/github/spec-kit/main/workflows/bugfix/workflow.yml",
       "installed_at": "2026-09-26T03:21:36.467187+00:00",
       "updated_at": "2026-09-26T03:21:36.467195+00:00"
+    },
+    "guarded-sdd": {
+      "name": "Guarded SDD Cycle",
+      "version": "0.1.0",
+      "description": "Runs specify \u2192 plan, stopping after each when NEEDS CLARIFICATION markers remain",
+      "source": "workflows/guarded-sdd",
+      "installed_at": "2026-09-30T00:59:12.900210+00:00",
+      "updated_at": "2026-09-30T00:59:12.900216+00:00"
     }
   }
 }

@@ -1,0 +1,44 @@
+schema_version: "1.0"
+workflow:
+  id: "guarded-sdd"
+  name: "Guarded SDD Cycle"
+  version: "0.1.0"
+  author: "AG3NTZ3R0"
+  description: "Runs specify → plan, stopping after each when NEEDS CLARIFICATION markers remain"
+
+requires:
+  speckit_version: ">=1.0.13"
+
+inputs:
+  spec:
+    type: string
+    required: true
+    prompt: "Describe what you want to build"
+  integration:
+    type: string
+    default: "auto"
+    prompt: "Integration to use (e.g. claude, copilot, gemini; 'auto' uses the project's initialized integration)"
+
+# A headless agent cannot ask its questions, so it leaves NEEDS CLARIFICATION
+# markers behind and exits 0. Each check fails the run when markers remain;
+# resolve them, then `specify workflow resume <run_id>` reruns the check.
+steps:
+  - id: specify
+    command: speckit.specify
+    integration: "{{ inputs.integration }}"
+    input:
+      args: "{{ inputs.spec }}"
+
+  - id: check-spec
+    type: shell
+    run: bash "$SPECKIT_WORKFLOW_DIR/check" spec
+
+  - id: plan
+    command: speckit.plan
+    integration: "{{ inputs.integration }}"
+    input:
+      args: "{{ inputs.spec }}"
+
+  - id: check-plan
+    type: shell
+    run: bash "$SPECKIT_WORKFLOW_DIR/check" plan

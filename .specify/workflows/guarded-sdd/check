@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+# Fails when the current feature's spec or plan still holds NEEDS CLARIFICATION
+# markers, which a headless agent leaves behind instead of asking.
+set -uo pipefail
+
+. .specify/scripts/bash/common.sh
+eval "$(get_feature_paths --no-persist)" || exit 2
+
+case "${1:-}" in
+spec) files=("$FEATURE_SPEC") ;;
+plan) files=("$IMPL_PLAN") ;;
+*)
+	echo "usage: check spec|plan" >&2
+	exit 2
+	;;
+esac
+
+[ -f "${files[0]}" ] || { echo "not found: ${files[0]}" >&2; exit 2; }
+[ "$1" = plan ] && [ -f "$RESEARCH" ] && files+=("$RESEARCH")
+
+if grep -Hn 'NEEDS CLARIFICATION' "${files[@]}"; then
+	echo "$1 has unresolved clarifications" >&2
+	exit 1
+fi
