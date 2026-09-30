@@ -30,9 +30,14 @@ for skill in "$here"/.agents/skills/*/; do
 	link "${skill%/}" "$HOME/.claude/skills/$(basename "$skill")"
 done
 
-# A link into this clone to a skill that no longer exists is removed.
-for dst in "$HOME"/.claude/skills/*; do
-	if [ -L "$dst" ] && [ ! -e "$dst" ] && [[ "$(readlink "$dst")" == "$here/.agents/skills/"* ]]; then
+for bin in "$here"/bin/*; do
+	link "$bin" "$HOME/.local/bin/$(basename "$bin")"
+done
+
+# A link into this clone to a skill or script that no longer exists is removed.
+for dst in "$HOME"/.claude/skills/* "$HOME"/.local/bin/*; do
+	if [ -L "$dst" ] && [ ! -e "$dst" ] &&
+		[[ "$(readlink "$dst")" == "$here/.agents/skills/"* || "$(readlink "$dst")" == "$here/bin/"* ]]; then
 		rm "$dst"
 		echo "removed: $dst"
 	fi
