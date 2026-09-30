@@ -21,22 +21,22 @@ inputs:
 # markers behind and exits 0. Each check fails the run when markers remain;
 # resolve them, then `specify workflow resume <run_id>` reruns the check.
 steps:
-  - id: specify
+  - id: speckit-specify
     command: speckit.specify
     integration: "{{ inputs.integration }}"
     input:
       args: "{{ inputs.spec }}"
 
-  - id: check-spec
+  - id: check-speckit-specify
     type: shell
     run: bash "$SPECKIT_WORKFLOW_DIR/check" spec
 
-  - id: plan
+  - id: speckit-plan
     command: speckit.plan
     integration: "{{ inputs.integration }}"
     input:
       args: "{{ inputs.spec }}"
 
-  - id: check-plan
+  - id: check-speckit-plan
     type: shell
     run: bash "$SPECKIT_WORKFLOW_DIR/check" plan
