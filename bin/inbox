@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# Lists this Spec Kit project's workflow runs, and opens an interactive Claude
-# session on the one you pick, preloaded with its current step and that
-# step's output.
+# Lists this Spec Kit project's guarded-sdd workflow runs, and opens an
+# interactive Claude session on the one you pick, preloaded with its status
+# and current step.
 set -euo pipefail
 
 [ -d .specify ] || { echo "not a Spec Kit project: no .specify/ here" >&2; exit 2; }
@@ -10,10 +10,10 @@ runs=()
 while IFS= read -r id; do
 	runs+=("$id")
 done < <(specify workflow status --json |
-	jq -r '.runs[].run_id')
+	jq -r '.runs[] | select(.workflow_id == "guarded-sdd") | .run_id')
 
 if [ "${#runs[@]}" -eq 0 ]; then
-	echo "no workflow runs"
+	echo "no guarded-sdd runs"
 	exit 0
 fi
 
@@ -30,10 +30,11 @@ read -rp "open which? " n
 id="${runs[$((n - 1))]}"
 
 prompt=$(state "$id" | jq -r '
-	(.step_results[.current_step_id // ""].output // {}) as $out |
 	"Spec Kit workflow run \(.run_id) (\(.workflow_id)) is \(.status) at step \(.current_step_id // "-").\n\n" +
-	"Its output:\n\n\(($out.stdout // "") + ($out.stderr // ""))\n" +
-	"Help me resolve this so the run can resume."')
+	"This is a Guarded SDD run: each check-speckit-* step stops the run when\n" +
+	"the step before it left work for a human. Rerun that check to see what it\n" +
+	"found, walk me through resolving it, and tell me when the run is ready for\n" +
+	"`specify workflow resume \(.run_id)`."')
 
 claude "$prompt"
 
