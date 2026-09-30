@@ -22,10 +22,8 @@ fi
 state() { cat ".specify/workflows/runs/$1/state.json"; }
 
 for i in "${!runs[@]}"; do
-	state "${runs[$i]}" | jq -r --arg n "$((i + 1))" '
-		"\($n)) \(.run_id)  " +
-		if .status == "completed" then "completed, review it"
-		else "\(.status) at \(.current_step_id // "-")" end'
+	state "${runs[$i]}" | jq -r --arg n "$((i + 1))" \
+		'"\($n)) \(.run_id)  \(.status) at \(.current_step_id // "-")"'
 done
 
 read -rp "open which? " n
@@ -35,20 +33,17 @@ id="${runs[$((n - 1))]}"
 status=$(state "$id" | jq -r .status)
 
 if [ "$status" = completed ]; then
-	prompt=$(state "$id" | jq -r '
-		"Spec Kit workflow run \(.run_id) (\(.workflow_id)) is completed.\n\n" +
-		"This Guarded SDD run specified, planned, and implemented a feature in this\n" +
-		"project. I am reviewing the code it wrote before I open it for review. Walk\n" +
-		"me through what changed against the feature spec, then answer my questions.\n" +
-		"Do not commit, push, or open a review unless I ask."')
+	ask="It finished, so review the code it wrote: walk me through what changed against the feature spec and answer my questions. Do not commit, push, or open a review unless I ask."
 else
-	prompt=$(state "$id" | jq -r '
-		"Spec Kit workflow run \(.run_id) (\(.workflow_id)) is \(.status) at step \(.current_step_id // "-").\n\n" +
-		"This is a Guarded SDD run: each check-speckit-* step stops the run when\n" +
-		"the step before it left work for a human. Rerun that check to see what it\n" +
-		"found, walk me through resolving it, and tell me when the run is ready for\n" +
-		"`specify workflow resume \(.run_id)`."')
+	ask="Rerun that check to see what it found, walk me through resolving it, and tell me when the run is ready for \`specify workflow resume $id\`."
 fi
+
+prompt="$(state "$id" | jq -r \
+	'"Spec Kit workflow run \(.run_id) (\(.workflow_id)) is \(.status) at step \(.current_step_id // "-")."')
+
+This is a Guarded SDD run: each check-speckit-* step stops the run when the step before it left work for a human.
+
+$ask"
 
 claude "$prompt"
 
