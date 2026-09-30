@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Lists this Spec Kit project's guarded-sdd workflow runs, and opens an
+# Lists this Spec Kit project's paused and failed guarded-sdd runs, the ones
+# `specify workflow resume` accepts, and opens an
 # interactive Claude session on the one you pick, preloaded with its status
 # and current step.
 set -euo pipefail
@@ -10,10 +11,11 @@ runs=()
 while IFS= read -r id; do
 	runs+=("$id")
 done < <(specify workflow status --json |
-	jq -r '.runs[] | select(.workflow_id == "guarded-sdd") | .run_id')
+	jq -r '.runs[] | select(.workflow_id == "guarded-sdd")
+		| select(.status == "paused" or .status == "failed") | .run_id')
 
 if [ "${#runs[@]}" -eq 0 ]; then
-	echo "no guarded-sdd runs"
+	echo "no paused or failed guarded-sdd runs"
 	exit 0
 fi
 
