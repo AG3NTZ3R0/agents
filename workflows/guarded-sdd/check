@@ -1,27 +1,53 @@
 #!/usr/bin/env bash
-# Fails when the current feature's spec, plan, or tasks file is missing, or
-# when the spec or plan still holds NEEDS CLARIFICATION markers, which a
-# headless agent leaves behind instead of asking.
+# Fails when a step's output is missing (exit 2) or still needs a human
+# (exit 1): NEEDS CLARIFICATION markers, which a headless agent leaves behind
+# instead of asking, or unchecked boxes in the spec's quality checklist.
 set -uo pipefail
 
 . .specify/scripts/bash/common.sh
 eval "$(get_feature_paths --no-persist)" || exit 2
 
+checklist="$FEATURE_DIR/checklists/requirements.md"
+status=0
+
+require() {
+	[ -f "$1" ] || { echo "not found: $1" >&2; exit 2; }
+}
+
+markers() {
+	if grep -Hn 'NEEDS CLARIFICATION' "$@"; then
+		echo "unresolved clarifications" >&2
+		status=1
+	fi
+}
+
+unchecked() {
+	if grep -Hn -- '- \[ \]' "$1"; then
+		echo "unchecked items" >&2
+		status=1
+	fi
+}
+
 case "${1:-}" in
-spec) files=("$FEATURE_SPEC") ;;
-plan) files=("$IMPL_PLAN") ;;
-tasks) files=("$TASKS") ;;
+spec)
+	require "$FEATURE_SPEC"
+	require "$checklist"
+	markers "$FEATURE_SPEC"
+	unchecked "$checklist"
+	;;
+plan)
+	require "$IMPL_PLAN"
+	files=("$IMPL_PLAN")
+	[ -f "$RESEARCH" ] && files+=("$RESEARCH")
+	markers "${files[@]}"
+	;;
+tasks)
+	require "$TASKS"
+	;;
 *)
 	echo "usage: check spec|plan|tasks" >&2
 	exit 2
 	;;
 esac
 
-[ -f "${files[0]}" ] || { echo "not found: ${files[0]}" >&2; exit 2; }
-[ "$1" = tasks ] && exit 0
-[ "$1" = plan ] && [ -f "$RESEARCH" ] && files+=("$RESEARCH")
-
-if grep -Hn 'NEEDS CLARIFICATION' "${files[@]}"; then
-	echo "$1 has unresolved clarifications" >&2
-	exit 1
-fi
+exit "$status"
