@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+# Lists this Spec Kit project's workflow runs that stopped, and opens an
+# interactive Claude session on the one you pick, preloaded with the step it
+# stopped at and that step's output.
+set -euo pipefail
+
+[ -d .specify ] || { echo "not a Spec Kit project: no .specify/ here" >&2; exit 2; }
+
+runs=()
+while IFS= read -r id; do
+	runs+=("$id")
+done < <(specify workflow status --json |
+	jq -r '.runs[] | select(.status == "failed" or .status == "paused") | .run_id')
+
+if [ "${#runs[@]}" -eq 0 ]; then
+	echo "inbox empty"
+	exit 0
+fi
+
+state() { cat ".specify/workflows/runs/$1/state.json"; }
+
+for i in "${!runs[@]}"; do
+	state "${runs[$i]}" | jq -r --arg n "$((i + 1))" \
+		'"\($n)) \(.run_id)  \(.workflow_id)  \(.status) at \(.current_step_id)"'
+done
+
+read -rp "open which? " n
+[[ "$n" =~ ^[0-9]+$ ]] && [ "$n" -ge 1 ] && [ "$n" -le "${#runs[@]}" ] ||
+	{ echo "no such run: $n" >&2; exit 2; }
+id="${runs[$((n - 1))]}"
+
+prompt=$(state "$id" | jq -r '
+	.step_results[.current_step_id].output as $out |
+	"Spec Kit workflow run \(.run_id) (\(.workflow_id)) stopped at step \(.current_step_id).\n\n" +
+	"Its output:\n\n\(($out.stdout // "") + ($out.stderr // ""))\n" +
+	"Help me resolve this so the run can resume."')
+
+claude "$prompt"
+
+echo "resume with: specify workflow resume $id"
