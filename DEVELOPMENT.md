@@ -37,11 +37,18 @@ with no arguments where the skill's purpose allows.
 ### V. Safe Installation
 
 `install` MUST be the only thing that changes the machine: links, tools such as the
-`specify` CLI, and user settings. Any other skill MUST act only on the current session and
-project. `install` MUST be safe to rerun, MUST repair links left by a moved clone, MUST
-remove links to deleted skills, and MUST refuse to replace anything it did not create. The
-skill that updates the environment MUST refuse to act on a clone that is off `main` or has
-uncommitted changes.
+`specify` CLI, and user settings. A skill MUST act only on the current session and project;
+the `environment` skill changes the machine only by running `install`.
+
+`install` MUST:
+
+- be safe to rerun
+- repair links left by a moved clone
+- remove links to deleted skills
+- refuse to replace anything it did not create
+
+The skill that updates the environment MUST refuse to act on a clone that is off `main` or
+has uncommitted changes.
 
 Rationale: the environment is loaded into every session, so a destructive or partial run
 breaks every repository at once.
