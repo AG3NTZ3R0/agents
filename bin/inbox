@@ -26,10 +26,12 @@ fi
 
 state() { cat "$1/.specify/workflows/runs/$2/state.json"; }
 
+# The branch names the feature; a run stopped before specify has none yet.
 for i in "${!runs[@]}"; do
-	state "${dirs[$i]}" "${runs[$i]}" | jq -r --arg n "$((i + 1))" --arg dir "${dirs[$i]}" \
-		'"\($n)) \(.run_id)  \(.status) at \(.current_step_id // "-")  \($dir)"'
-done
+	branch=$(git -C "${dirs[$i]}" branch --show-current)
+	state "${dirs[$i]}" "${runs[$i]}" | jq -r --arg n "$((i + 1))" --arg branch "${branch:-(no branch yet)}" \
+		'"\($n))\t\($branch)\t\(.status) at \(.current_step_id // "-")\t(\(.run_id))"'
+done | column -t -s $'\t'
 
 read -rp "open which? " n
 [[ "$n" =~ ^[0-9]+$ ]] && [ "$n" -ge 1 ] && [ "$n" -le "${#runs[@]}" ] ||
