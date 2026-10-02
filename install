@@ -103,10 +103,6 @@ else
 	echo "warning: could not reach $speckit; specify left as it is" >&2
 fi
 
-# The speckit skill adds these workflows to a project from this fixed path, so
-# no skill depends on where this clone sits.
-link "$here/specify/workflows" "${XDG_DATA_HOME:-$HOME/.local/share}/agents/workflows"
-
 for bin in "$here"/bin/*; do
 	link "$bin" "$HOME/.local/bin/$(basename "$bin")"
 done

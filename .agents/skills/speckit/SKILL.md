@@ -28,8 +28,9 @@ brings the project current:
 - `specify workflow update` updates installed workflows.
 - `specify workflow add` adds each bundled workflow the project lacks.
 - `specify workflow add --dev` adds each workflow in the agents clone's
-  `specify/workflows/`, such as `guarded-sdd`, from the path `install` links
-  it to, and re-adds one whose installed copy differs from the clone's.
+  `specify/workflows/`, such as `guarded-sdd`, through the `workflows` link
+  beside this file, and re-adds one whose installed copy differs from the
+  clone's.
 
 Customizations to Spec Kit's behavior MUST go in a preset, never in the
 managed files.

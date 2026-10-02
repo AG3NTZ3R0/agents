@@ -14,8 +14,6 @@ Requires `git`, `curl`, `jq`, and `uv`.
   must be on your `PATH`
 - `vim/vimrc` to `~/.vim/vimrc`, warning if a `~/.vimrc` exists, since Vim
   reads that instead
-- `specify/workflows/` to `~/.local/share/agents/workflows`, where the
-  `speckit` skill adds them to a project from
 
 It adds `git/gitconfig` to `include.path` in `~/.gitconfig`.
 
