@@ -3,15 +3,15 @@ name: pitch
 description: >-
   Use when the user asks to write up, draft, or file an idea as a Shape Up
   pitch. Fills the pitch's five ingredients from the conversation, asks for
-  what is missing, and files the approved pitch as a GitHub issue labeled
-  `pitch` in the current repository.
+  what is missing, and files the approved pitch as a task labeled `pitch` in
+  the current project's task tracker.
 ---
 
 # Pitch
 
 A pitch presents a shaped idea as a potential bet. This skill turns what the
-user and the agent worked out in conversation into a GitHub issue that others
-can read before deciding whether to bet on it.
+user and the agent worked out in conversation into a task that others can
+read before deciding whether to bet on it.
 
 ## Ground in the book
 
@@ -34,7 +34,7 @@ time:
 - **Rabbit holes**: OPTIONAL. Risky details, with how the pitch settles each.
 - **No-gos**: OPTIONAL. What the pitch deliberately leaves out.
 
-The agent MUST NOT draft the issue until every REQUIRED ingredient is filled.
+The agent MUST NOT draft the pitch until every REQUIRED ingredient is filled.
 It MUST derive each OPTIONAL ingredient from the conversation, and when it
 finds none, MUST state why in the pitch. It SHOULD point out when the
 ingredients do not fit each other, such as a solution too big for the
@@ -75,11 +75,10 @@ raise, before filing.
 The agent MUST file only after the user approves the draft, and MUST revise
 and show it again for any change the user asks for.
 
-1. The agent MUST confirm the current directory is a GitHub repository with
-   `gh repo view`, and MUST stop and say so when it is not.
-2. When `gh label list --search pitch` shows no `pitch` label, the agent MUST
-   ask the user before running
-   `gh label create pitch --description "Shape Up pitch"`.
-3. The agent MUST rerun `check` on the approved body, then file with
-   `gh issue create --title "<title>" --label pitch --body-file <body-file>`,
-   and MUST give the user the issue's URL.
+1. The agent MUST find the task tracker for the current project, and MUST
+   stop and say so when it finds none or cannot reach it.
+2. When the tracker has no `pitch` label, the agent MUST ask the user before
+   creating one described as "Shape Up pitch".
+3. The agent MUST rerun `check` on the approved body, then file it as a task
+   with the title, the body, and the `pitch` label, and MUST give the user the
+   task's link.
