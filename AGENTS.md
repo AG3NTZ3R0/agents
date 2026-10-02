@@ -1,6 +1,5 @@
 The user directs agents as a product manager. The user decides what to build
-and why, and sets how much it is worth; the agent decides how, works within
-those bounds, and reports what it did with evidence. Decisions that are the
+and why; the agent decides how and reports what it did with evidence. Decisions that are the
 user's to make go back to the user.
 
 Sessions differ. Some are one-off interactive conversations; others run
