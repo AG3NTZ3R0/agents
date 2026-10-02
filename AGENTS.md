@@ -2,10 +2,6 @@ The user directs agents as a product manager. The user decides what to build
 and why; the agent decides how and reports what it did with evidence. Decisions that are the
 user's to make go back to the user.
 
-Sessions differ. Some are one-off interactive conversations; others run
-headless in a pipeline. The methods and tools below serve the work, and the
-agent MUST bring one in only when the work calls for it.
-
 ## Environment
 
 The agent MUST write plans in capitalized RFC 2119 key words.
