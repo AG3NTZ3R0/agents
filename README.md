@@ -5,10 +5,8 @@ See [INSTALLATION.md](INSTALLATION.md) to set it up.
 
 ## Environment
 
-`./install` sets up the machine: it links `AGENTS.md` and each skill in
-`.agents/skills/` in at the user level, so no project repository holds a copy,
-and installs the tools they use. Skills work only in the current session and
-project.
+`./install` links `AGENTS.md` and each skill in `.agents/skills/` in at the
+user level, so no project repository holds a copy, and installs their tools.
 
 The repository is agent-agnostic and Claude-compliant. Instructions live in
 `AGENTS.md` and skills in `.agents/skills/`, conventions any coding agent can
