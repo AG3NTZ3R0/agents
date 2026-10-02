@@ -30,6 +30,16 @@ for skill in "$here"/.agents/skills/*/; do
 	link "${skill%/}" "$HOME/.claude/skills/$(basename "$skill")"
 done
 
+link "$here/vim/vimrc" "$HOME/.vim/vimrc"
+
+# Git's own include keeps ~/.gitconfig the user's, with one line pointing here.
+if git config --global --get-all include.path | grep -qxF "$here/git/gitconfig"; then
+	echo "already included: $here/git/gitconfig"
+else
+	git config --global --add include.path "$here/git/gitconfig"
+	echo "included: $here/git/gitconfig"
+fi
+
 for bin in "$here"/bin/*; do
 	link "$bin" "$HOME/.local/bin/$(basename "$bin")"
 done

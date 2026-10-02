@@ -13,6 +13,13 @@ The repository is agent-agnostic and Claude-compliant. Instructions live in
 read. What is specific to Claude Code, the `CLAUDE.md` and `.claude/skills`
 links and the paths `install` writes to, only adapts it for Claude.
 
+## Vim
+
+Code is read locally in Vim, with nothing beyond what Vim and Git ship.
+`vim .` opens netrw, Vim's own file browser, and `:Lexplore` keeps it as a
+tree in a sidebar. `git difftool HEAD~1` reviews a commit in vimdiff, and
+`git difftool main...HEAD` a whole branch, before anything is pushed.
+
 ## Shape Up
 
 Shape Up, Basecamp's guide to product development, is how work is defined. An
