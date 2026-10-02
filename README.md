@@ -15,12 +15,12 @@ links and the paths `install` writes to, only adapts it for Claude.
 
 ## Shape Up
 
-Shape Up, Basecamp's guide to product development, organizes the work. An
+Shape Up, Basecamp's guide to product development, is how work is defined. An
 idea is shaped into a pitch, and a pitch is what gets bet on.
 
 ## Spec Kit
 
-Spec Kit is the vehicle that performs the work. It gives a coding agent
+Spec Kit is a tool for building defined work. It gives a coding agent
 "structured processes that keep intent and evidence ahead of implementation",
 starting with Spec-Driven Development. A project's own principles are its
 constitution, kept in that project.
