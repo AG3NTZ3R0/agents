@@ -8,19 +8,21 @@ description: >-
 # Environment
 
 The agent's instructions and skills come from one git repository, cloned once
-per machine. Its `install` is the only thing that changes the machine: it
-links `AGENTS.md` to `~/.claude/CLAUDE.md` and each skill in `.agents/skills/`
-to `~/.claude/skills/<name>`, so every session in every repository reads them
-from that clone, and it installs or upgrades the `specify` CLI.
-`INSTALLATION.md` there covers the first setup, which has to be done by hand.
+per machine. Its `install` sets up:
+
+- `AGENTS.md` and each skill, linked into `~/.claude/`, so every session reads
+  them from the clone
+- the tools skills use, such as the `specify` CLI
+- the settings they need, such as auto mode
+
+`INSTALLATION.md` in the clone lists each path and covers the first setup.
 
 Run `sync`, which sits beside this file:
 
     <this skill's directory>/sync
 
 It finds the clone by resolving its own link, pulls `main` fast-forward only,
-and reruns `install`, which links new skills and removes links to deleted
-ones. It prints the clone's path and the commits and files that changed. It
+and reruns `install`. It prints the clone's path and the commits and files that changed. It
 refuses and exits non-zero when the clone is off `main` or has uncommitted
 changes.
 

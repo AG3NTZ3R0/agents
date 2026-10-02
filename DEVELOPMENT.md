@@ -36,9 +36,9 @@ with no arguments where the skill's purpose allows.
 
 ### V. Safe Installation
 
-`install` MUST be the only thing that changes the machine: links, tools such as the
-`specify` CLI, and user settings. A skill MUST act only on the current session and project;
-the `environment` skill changes the machine only by running `install`.
+`install` MUST be the only thing that changes the machine. A skill MUST act only on the
+current session and project; the `environment` skill changes the machine only by running
+`install`.
 
 `install` MUST:
 
