@@ -32,6 +32,14 @@ done
 
 link "$here/vim/vimrc" "$HOME/.vim/vimrc"
 
+# Vim reads ~/.vimrc before ~/.vim/vimrc (:help vimrc), so the user decides.
+if [ -e "$HOME/.vimrc" ]; then
+	echo "warning: ~/.vimrc exists, so Vim ignores ~/.vim/vimrc." >&2
+	echo "  To use this repo's vimrc, move your settings into" >&2
+	echo "  $here/vim/vimrc and remove ~/.vimrc." >&2
+	echo "  To keep yours, do nothing." >&2
+fi
+
 # Git's own include keeps ~/.gitconfig the user's, with one line pointing here.
 if git config --global --get-all include.path | grep -qxF "$here/git/gitconfig"; then
 	echo "already included: $here/git/gitconfig"

@@ -10,7 +10,8 @@ Requires `git`, `curl`, `jq`, and an authenticated `gh`.
 `.agents/skills/` to `~/.claude/skills/<name>`, each script in `bin/`, such
 as `inbox`, to `~/.local/bin/<name>`, which must be on your `PATH`, and
 `vim/vimrc` to `~/.vim/vimrc`. It adds `git/gitconfig` to `include.path` in
-`~/.gitconfig`. It is safe to rerun, repairs links left by a moved clone,
+`~/.gitconfig`, and warns if a `~/.vimrc` exists, since Vim reads that
+instead. It is safe to rerun, repairs links left by a moved clone,
 removes links to deleted skills and scripts, and refuses to replace anything
 else.
 
