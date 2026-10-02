@@ -43,11 +43,11 @@ else
 			grep -qxF "$w" <<<"$have" && continue
 			specify workflow add "$w" >&2 || echo "specify workflow add $w failed in $PWD" >&2
 		done
-		# Adds each workflow in the agents clone's workflows/, and re-adds one whose
-		# installed copy differs from it, since `specify workflow update` skips
-		# workflows installed from a local path.
+		# Adds each workflow in the agents clone's specify/workflows/, and re-adds
+		# one whose installed copy differs from it, since `specify workflow update`
+		# skips workflows installed from a local path.
 		clone="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/../../.." && pwd)"
-		for src in "$clone"/workflows/*/; do
+		for src in "$clone"/specify/workflows/*/; do
 			[ -f "$src/workflow.yml" ] || continue
 			w=$(grep -m1 -oE '^  id: *"?[a-z0-9-]+' "$src/workflow.yml" | grep -oE '[a-z0-9-]+$')
 			[ -n "$w" ] || { echo "no workflow id in $src/workflow.yml" >&2; continue; }

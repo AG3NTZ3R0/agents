@@ -47,7 +47,7 @@ breaks every repository at once.
 ### VI. Harnesses Are Tested Elsewhere
 
 This repository MUST NOT be initialized as a Spec Kit project. A Spec Kit workflow in
-`workflows/` MUST be tested in a scratch Spec Kit project, never in this repository.
+`specify/workflows/` MUST be tested in a scratch Spec Kit project, never in this repository.
 
 Rationale: this repository builds the harness; running the harness on itself mixes its
 output into its source.

@@ -22,9 +22,9 @@ and scripts, and refuses to replace anything else.
 After that, the `environment` skill keeps it current: ask the agent to update
 its environment.
 
-Workflows in `workflows/`, such as `guarded-sdd`, run Claude Code headless,
-where no one is present to approve a tool call. They require auto mode in
-`~/.claude/settings.json`:
+Workflows in `specify/workflows/`, such as `guarded-sdd`, run Claude Code
+headless, where no one is present to approve a tool call. They require auto
+mode in `~/.claude/settings.json`:
 
     "permissions": {
       "defaultMode": "auto"

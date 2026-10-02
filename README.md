@@ -32,9 +32,9 @@ Spec Kit is a tool for building defined work. It gives a coding agent
 starting with Spec-Driven Development. A project's own principles are its
 constitution, kept in that project.
 
-`workflows/` holds Spec Kit workflows to install into a project with
-`specify workflow add --dev workflows/<id>`. This repository is not a Spec Kit
-project itself; see [DEVELOPMENT.md](DEVELOPMENT.md).
+`specify/workflows/` holds Spec Kit workflows to install into a project with
+`specify workflow add --dev specify/workflows/<id>`. This repository is not a
+Spec Kit project itself; see [DEVELOPMENT.md](DEVELOPMENT.md).
 
 ## License
 
