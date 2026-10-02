@@ -48,6 +48,61 @@ else
 	echo "included: $here/git/gitconfig"
 fi
 
+# Headless Spec Kit workflows have no one to approve a tool call, so they need
+# auto mode; a mode the user chose is theirs, and every other setting is left.
+settings="$HOME/.claude/settings.json"
+mkdir -p "$(dirname "$settings")"
+[ -e "$settings" ] || echo '{}' >"$settings"
+mode=$(jq -r '.permissions.defaultMode // empty' "$settings") ||
+	{ echo "refusing to edit $settings: not valid JSON" >&2; exit 1; }
+if [ "$mode" = auto ]; then
+	echo "already set: permissions.defaultMode = auto in $settings"
+elif [ -n "$mode" ]; then
+	echo "warning: permissions.defaultMode is $mode in $settings;" >&2
+	echo "  headless Spec Kit workflows require auto." >&2
+else
+	tmp=$(mktemp "$settings.XXXXXX")
+	jq '.permissions.defaultMode = "auto"' "$settings" >"$tmp"
+	mv "$tmp" "$settings"
+	echo "set: permissions.defaultMode = auto in $settings"
+fi
+
+# Installs specify at the latest release, or upgrades it when it trails, and
+# prints the changelog of every release it moved past. A release is a tag with
+# no prerelease suffix.
+speckit=github/spec-kit
+version() { specify version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | awk 'NR==1{print "v" $0}' || true; }
+if latest=$(git ls-remote --tags --refs "https://github.com/$speckit" | grep -oE 'v[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -1); then
+	was=$(version)
+	if [ -z "$was" ]; then
+		if command -v uv >/dev/null; then
+			uv tool install specify-cli --from "git+https://github.com/$speckit.git@$latest" ||
+				echo "warning: could not install specify $latest" >&2
+		else
+			echo "warning: specify needs uv; see https://docs.astral.sh/uv/" >&2
+		fi
+	elif [ "$was" != "$latest" ]; then
+		specify self upgrade || echo "warning: specify self upgrade failed; still on $was" >&2
+	fi
+	now=$(version)
+	echo "specify: was ${was:-none}, now ${now:-none}, latest $latest"
+	if [ -n "$was" ] && [ -n "$now" ] && [ "$was" != "$now" ]; then
+		printf '\n===== specify changelog %s..%s =====\n\n' "$was" "$now"
+		curl -fsS "https://raw.githubusercontent.com/$speckit/$now/CHANGELOG.md" |
+			awk -v was="${was#v}" -v now="${now#v}" '
+				function cmp(a, b,  x, y, i) {
+					split(a, x, "."); split(b, y, ".")
+					for (i = 1; i <= 3; i++) if (x[i] + 0 != y[i] + 0) return x[i] - y[i]
+					return 0
+				}
+				/^## \[/ { v = substr($2, 2, length($2) - 2); keep = cmp(v, was) > 0 && cmp(v, now) <= 0 }
+				keep' ||
+			echo "warning: could not read the specify changelog at $now" >&2
+	fi
+else
+	echo "warning: could not reach $speckit; specify left as it is" >&2
+fi
+
 for bin in "$here"/bin/*; do
 	link "$bin" "$HOME/.local/bin/$(basename "$bin")"
 done

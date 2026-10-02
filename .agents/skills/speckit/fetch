@@ -7,14 +7,16 @@ root="${XDG_CACHE_HOME:-$HOME/.cache}/speckit"
 
 installed() { specify version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | awk 'NR==1{print "v" $0}' || true; }
 
-latest=$(gh api "repos/$repo/releases/latest" --jq .tag_name)
+# A release is a tag with no prerelease suffix.
+latest=$(git ls-remote --tags --refs "https://github.com/$repo" | grep -oE 'v[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -1)
 was=$(installed)
 
+# install owns the CLI, so a missing or trailing one is reported, not changed.
 if [ -z "$was" ]; then
-	echo "specify is not installed; see https://github.com/$repo#readme" >&2
+	echo "specify is not installed; update the environment to install it" >&2
 else
 	if [ "$was" != "$latest" ]; then
-		specify self upgrade >&2 || echo "specify self upgrade failed; still on $was" >&2
+		echo "specify $was trails $latest; update the environment to upgrade it" >&2
 	fi
 	if [ -d .specify ]; then
 		# Replaces managed templates, commands, and scripts with the release's,
@@ -43,11 +45,10 @@ else
 			grep -qxF "$w" <<<"$have" && continue
 			specify workflow add "$w" >&2 || echo "specify workflow add $w failed in $PWD" >&2
 		done
-		# Adds each workflow in the agents clone's specify/workflows/, and re-adds
-		# one whose installed copy differs from it, since `specify workflow update`
-		# skips workflows installed from a local path.
-		clone="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/../../.." && pwd)"
-		for src in "$clone"/specify/workflows/*/; do
+		# Adds each workflow beside this script, and re-adds one whose installed
+		# copy differs from it, since `specify workflow update` skips workflows
+		# installed from a local path.
+		for src in "$here"/workflows/*/; do
 			[ -f "$src/workflow.yml" ] || continue
 			w=$(grep -m1 -oE '^  id: *"?[a-z0-9-]+' "$src/workflow.yml" | grep -oE '[a-z0-9-]+$')
 			[ -n "$w" ] || { echo "no workflow id in $src/workflow.yml" >&2; continue; }
@@ -59,7 +60,6 @@ else
 		done
 	fi
 fi
-now=$(installed)
 
 # A release never changes, so its docs are cached under its tag and every
 # other tag is dropped.
@@ -74,16 +74,8 @@ if [ ! -f "$cache/docs/toc.yml" ]; then
 	mv "$tmp/spec-kit" "$cache"
 fi
 
-printf 'specify: installed %s, now %s, latest %s\n' "${was:-none}" "${now:-none}" "$latest"
+printf 'specify: installed %s, latest %s\n' "${was:-none}" "$latest"
 printf 'docs: %s\n' "$cache"
-
-if [ -n "$was" ] && [ "$was" != "$latest" ]; then
-	for t in $(gh api "repos/$repo/releases?per_page=100" --jq '.[] | select(.prerelease | not) | .tag_name'); do
-		[ "$t" != "$was" ] && [ "$(printf '%s\n' "$was" "$t" | sort -V | tail -1)" = "$t" ] || continue
-		printf '\n===== release notes %s =====\n\n' "$t"
-		gh release view "$t" -R "$repo" --json body --jq .body
-	done
-fi
 
 printf '\n===== docs/toc.yml =====\n\n'
 cat "$cache/docs/toc.yml"

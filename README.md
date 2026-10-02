@@ -1,17 +1,8 @@
 # Agentic Software Development Lifecycle
 
 The environment an agent carries into every repository it works in.
-See [INSTALLATION.md](INSTALLATION.md) to set it up.
-
-## Environment
-
-`./install` links `AGENTS.md` and each skill in `.agents/skills/` in at the
-user level, so no project repository holds a copy.
-
-The repository is agent-agnostic and Claude-compliant. Instructions live in
-`AGENTS.md` and skills in `.agents/skills/`, conventions any coding agent can
-read. What is specific to Claude Code, the `CLAUDE.md` and `.claude/skills`
-links and the paths `install` writes to, only adapts it for Claude.
+See [INSTALLATION.md](INSTALLATION.md) to set it up and
+[DEVELOPMENT.md](DEVELOPMENT.md) to change it.
 
 ## Vim
 
@@ -32,9 +23,8 @@ Spec Kit is a tool for building defined work. It gives a coding agent
 starting with Spec-Driven Development. A project's own principles are its
 constitution, kept in that project.
 
-`specify/workflows/` holds Spec Kit workflows to install into a project with
-`specify workflow add --dev specify/workflows/<id>`. This repository is not a
-Spec Kit project itself; see [DEVELOPMENT.md](DEVELOPMENT.md).
+`specify/workflows/` holds Spec Kit workflows, which the `speckit` skill adds
+to a project.
 
 ## License
 

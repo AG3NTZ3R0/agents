@@ -1,6 +1,6 @@
 # Installation
 
-Requires `git`, `curl`, `jq`, and an authenticated `gh`.
+Requires `git`, `curl`, `jq`, and `uv`.
 
     git clone https://github.com/AG3NTZ3R0/agents.git
     cd agents
@@ -15,20 +15,15 @@ Requires `git`, `curl`, `jq`, and an authenticated `gh`.
 - `vim/vimrc` to `~/.vim/vimrc`, warning if a `~/.vimrc` exists, since Vim
   reads that instead
 
-It adds `git/gitconfig` to `include.path` in `~/.gitconfig`. It is safe to
-rerun, repairs links left by a moved clone, removes links to deleted skills
-and scripts, and refuses to replace anything else.
+It adds `git/gitconfig` to `include.path` in `~/.gitconfig`.
 
-After that, the `environment` skill keeps it current: ask the agent to update
-its environment.
+It installs the `specify` CLI at the latest Spec Kit release with `uv`, or
+upgrades it with `specify self upgrade` when it trails, and prints the
+changelog of every release it moved past.
 
-Workflows in `specify/workflows/`, such as `guarded-sdd`, run Claude Code
-headless, where no one is present to approve a tool call. They require auto
-mode in `~/.claude/settings.json`:
+It sets `permissions.defaultMode` to `auto` in `~/.claude/settings.json`,
+since workflows in `specify/workflows/`, such as `guarded-sdd`, run Claude
+Code headless, where no one is present to approve a tool call. It leaves every
+other setting alone, and only warns when you chose another mode.
 
-    "permissions": {
-      "defaultMode": "auto"
-    }
-
-`specify` is not required up front: the `speckit` skill reports when it is
-missing and has Spec Kit's installation guide at hand.
+After that, ask the agent to update its environment.
