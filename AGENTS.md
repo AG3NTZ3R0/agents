@@ -29,8 +29,7 @@ runs it from the terminal to build the habit. In a project that holds
 `.specify/`, when a feature is ready to build, the agent MUST remind the user:
 `handoff "<feature>"` starts a `guarded-sdd` run in its own worktree and
 returns at once; `inbox` lists the runs that need the user and opens a session
-in the one picked; `git worktree remove <dir>` clears a run whose branch is
-merged.
+in the one picked.
 
 Vim is how the user reads code and reviews the agent's latest commit locally.
 When the agent asks for a review, it MUST remind the user: `vim .` opens the
