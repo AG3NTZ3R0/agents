@@ -48,6 +48,59 @@ else
 	echo "included: $here/git/gitconfig"
 fi
 
+# Headless Spec Kit workflows have no one to approve a tool call, so they need
+# auto mode; a mode the user chose is theirs, and every other setting is left.
+settings="$HOME/.claude/settings.json"
+mkdir -p "$(dirname "$settings")"
+[ -e "$settings" ] || echo '{}' >"$settings"
+mode=$(jq -r '.permissions.defaultMode // empty' "$settings") ||
+	{ echo "refusing to edit $settings: not valid JSON" >&2; exit 1; }
+if [ "$mode" = auto ]; then
+	echo "already set: permissions.defaultMode = auto in $settings"
+elif [ -n "$mode" ]; then
+	echo "warning: permissions.defaultMode is $mode in $settings;" >&2
+	echo "  headless Spec Kit workflows require auto." >&2
+else
+	tmp=$(mktemp "$settings.XXXXXX")
+	jq '.permissions.defaultMode = "auto"' "$settings" >"$tmp"
+	mv "$tmp" "$settings"
+	echo "set: permissions.defaultMode = auto in $settings"
+fi
+
+# Installs specify at the latest release, or upgrades it when it trails, and
+# prints the release notes of every release it moved past.
+speckit=github/spec-kit
+version() { specify version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | awk 'NR==1{print "v" $0}' || true; }
+if latest=$(gh api "repos/$speckit/releases/latest" --jq .tag_name); then
+	was=$(version)
+	if [ -z "$was" ]; then
+		if command -v uv >/dev/null; then
+			uv tool install specify-cli --from "git+https://github.com/$speckit.git@$latest" ||
+				echo "warning: could not install specify $latest" >&2
+		else
+			echo "warning: specify needs uv; see https://docs.astral.sh/uv/" >&2
+		fi
+	elif [ "$was" != "$latest" ]; then
+		specify self upgrade || echo "warning: specify self upgrade failed; still on $was" >&2
+	fi
+	now=$(version)
+	echo "specify: was ${was:-none}, now ${now:-none}, latest $latest"
+	if [ -n "$was" ] && [ "$was" != "$now" ]; then
+		for t in $(gh api "repos/$speckit/releases?per_page=100" --jq '.[] | select(.prerelease | not) | .tag_name'); do
+			[ "$t" != "$was" ] && [ "$(printf '%s\n' "$was" "$t" | sort -V | tail -1)" = "$t" ] || continue
+			[ "$(printf '%s\n' "$now" "$t" | sort -V | tail -1)" = "$now" ] || continue
+			printf '\n===== specify release notes %s =====\n\n' "$t"
+			gh release view "$t" -R "$speckit" --json body --jq .body
+		done
+	fi
+else
+	echo "warning: could not reach $speckit; specify left as it is" >&2
+fi
+
+# The speckit skill adds these workflows to a project from this fixed path, so
+# no skill depends on where this clone sits.
+link "$here/specify/workflows" "${XDG_DATA_HOME:-$HOME/.local/share}/agents/workflows"
+
 for bin in "$here"/bin/*; do
 	link "$bin" "$HOME/.local/bin/$(basename "$bin")"
 done

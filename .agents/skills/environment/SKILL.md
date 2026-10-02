@@ -1,17 +1,18 @@
 ---
 name: environment
 description: >-
-  Use to update, inspect, or explain the agent's own environment: the AGENTS.md
-  and skills installed from the agents repository into every session.
+  Use to update, inspect, or explain the agent's own environment: the AGENTS.md,
+  skills, and tools installed from the agents repository into every session.
 ---
 
 # Environment
 
 The agent's instructions and skills come from one git repository, cloned once
-per machine. Its `install` links `AGENTS.md` to `~/.claude/CLAUDE.md` and
-each skill in `.agents/skills/` to `~/.claude/skills/<name>`, so every session
-in every repository reads them from that clone. `INSTALLATION.md` there
-covers the first setup, which has to be done by hand.
+per machine. Its `install` is the only thing that changes the machine: it
+links `AGENTS.md` to `~/.claude/CLAUDE.md` and each skill in `.agents/skills/`
+to `~/.claude/skills/<name>`, so every session in every repository reads them
+from that clone, and it installs or upgrades the `specify` CLI.
+`INSTALLATION.md` there covers the first setup, which has to be done by hand.
 
 Run `sync`, which sits beside this file:
 
@@ -25,3 +26,7 @@ changes.
 
 A change to `AGENTS.md` or to a skill's description takes effect in the next
 session, not the current one; the agent MUST say so when `sync` reports one.
+
+The agent MUST report any `specify` upgrade `install` performed or failed to
+perform. When it printed release notes, the agent MUST name the versions the
+CLI moved between and summarize what those releases added or changed.

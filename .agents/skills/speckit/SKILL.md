@@ -2,9 +2,9 @@
 name: speckit
 description: >-
   Use for every question or task that involves Spec Kit (github/spec-kit) or
-  the specify CLI. Upgrades specify and the current project's Spec Kit files,
-  then syncs Spec Kit's user documentation at the latest release, since what
-  the agent remembers of Spec Kit is out of date.
+  the specify CLI. Upgrades the current project's Spec Kit files, then syncs
+  Spec Kit's user documentation at the latest release, since what the agent
+  remembers of Spec Kit is out of date.
 ---
 
 # Spec Kit
@@ -14,9 +14,10 @@ project directory when there is one:
 
     <this skill's directory>/fetch
 
-It upgrades the installed `specify` CLI when it trails the latest release.
-When the current directory holds `.specify/`, it then brings the project
-current:
+The environment's `install` owns the `specify` CLI; `fetch` only reports when
+it is missing or trails the latest release, and the agent MUST then offer to
+update the environment. When the current directory holds `.specify/`, `fetch`
+brings the project current:
 
 - `specify integration upgrade --force` replaces the project's Spec Kit
   commands, templates, and scripts with the release's, when the version its
@@ -27,16 +28,15 @@ current:
 - `specify workflow update` updates installed workflows.
 - `specify workflow add` adds each bundled workflow the project lacks.
 - `specify workflow add --dev` adds each workflow in the agents clone's
-  `specify/workflows/`, such as `guarded-sdd`, and re-adds one whose
-  installed copy differs from the clone's.
+  `specify/workflows/`, such as `guarded-sdd`, from the path `install` links
+  it to, and re-adds one whose installed copy differs from the clone's.
 
 Customizations to Spec Kit's behavior MUST go in a preset, never in the
 managed files.
 
 It then syncs `docs/` and `spec-driven.md` from `github/spec-kit` at the latest
 release into a cache directory named for that tag, and prints the versions,
-the cache path, the release notes since the installed version when it was
-behind, and `docs/toc.yml`.
+the cache path, and `docs/toc.yml`.
 
 `docs/toc.yml` indexes Spec Kit's user documentation; its `href` paths are
 relative to `docs/`. `spec-driven.md` is the full methodology the README
@@ -72,6 +72,5 @@ What the agent remembers of Spec Kit MUST NOT be the source of any answer.
 
 ## Reporting
 
-The agent MUST report any upgrade `fetch` performed or failed to perform.
-When it printed release notes, the agent MUST name the versions the CLI moved
-between and summarize what those releases added or changed.
+The agent MUST report any upgrade `fetch` performed or failed to perform, and
+any `specify` CLI it reported missing or trailing.
