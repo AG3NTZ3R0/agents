@@ -1,6 +1,6 @@
 # Installation
 
-Requires `git`, `curl`, `jq`, `uv`, and an authenticated `gh`.
+Requires `git`, `curl`, `jq`, and `uv`.
 
     git clone https://github.com/AG3NTZ3R0/agents.git
     cd agents
@@ -20,8 +20,8 @@ Requires `git`, `curl`, `jq`, `uv`, and an authenticated `gh`.
 It adds `git/gitconfig` to `include.path` in `~/.gitconfig`.
 
 It installs the `specify` CLI at the latest Spec Kit release with `uv`, or
-upgrades it with `specify self upgrade` when it trails, and prints the release
-notes it moved past.
+upgrades it with `specify self upgrade` when it trails, and prints the
+changelog of every release it moved past.
 
 It sets `permissions.defaultMode` to `auto` in `~/.claude/settings.json`,
 since workflows in `specify/workflows/`, such as `guarded-sdd`, run Claude

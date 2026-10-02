@@ -68,10 +68,11 @@ else
 fi
 
 # Installs specify at the latest release, or upgrades it when it trails, and
-# prints the release notes of every release it moved past.
+# prints the changelog of every release it moved past. A release is a tag with
+# no prerelease suffix.
 speckit=github/spec-kit
 version() { specify version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | awk 'NR==1{print "v" $0}' || true; }
-if latest=$(gh api "repos/$speckit/releases/latest" --jq .tag_name); then
+if latest=$(git ls-remote --tags --refs "https://github.com/$speckit" | grep -oE 'v[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -1); then
 	was=$(version)
 	if [ -z "$was" ]; then
 		if command -v uv >/dev/null; then
@@ -85,13 +86,18 @@ if latest=$(gh api "repos/$speckit/releases/latest" --jq .tag_name); then
 	fi
 	now=$(version)
 	echo "specify: was ${was:-none}, now ${now:-none}, latest $latest"
-	if [ -n "$was" ] && [ "$was" != "$now" ]; then
-		for t in $(gh api "repos/$speckit/releases?per_page=100" --jq '.[] | select(.prerelease | not) | .tag_name'); do
-			[ "$t" != "$was" ] && [ "$(printf '%s\n' "$was" "$t" | sort -V | tail -1)" = "$t" ] || continue
-			[ "$(printf '%s\n' "$now" "$t" | sort -V | tail -1)" = "$now" ] || continue
-			printf '\n===== specify release notes %s =====\n\n' "$t"
-			gh release view "$t" -R "$speckit" --json body --jq .body
-		done
+	if [ -n "$was" ] && [ -n "$now" ] && [ "$was" != "$now" ]; then
+		printf '\n===== specify changelog %s..%s =====\n\n' "$was" "$now"
+		curl -fsS "https://raw.githubusercontent.com/$speckit/$now/CHANGELOG.md" |
+			awk -v was="${was#v}" -v now="${now#v}" '
+				function cmp(a, b,  x, y, i) {
+					split(a, x, "."); split(b, y, ".")
+					for (i = 1; i <= 3; i++) if (x[i] + 0 != y[i] + 0) return x[i] - y[i]
+					return 0
+				}
+				/^## \[/ { v = substr($2, 2, length($2) - 2); keep = cmp(v, was) > 0 && cmp(v, now) <= 0 }
+				keep' ||
+			echo "warning: could not read the specify changelog at $now" >&2
 	fi
 else
 	echo "warning: could not reach $speckit; specify left as it is" >&2
