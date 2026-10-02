@@ -24,10 +24,8 @@ Spec Kit is a tool the agent uses to build defined work. When the work
 involves Spec Kit or `specify`, the agent MUST use the `speckit` skill, which
 brings Spec Kit current first, and MUST NOT rely on memory of it.
 
-Vim is how the user reviews the agent's commits locally, with `git difftool`,
-and is learning its keys. When the agent asks the user to review its work, it
-MUST remind them of Vim's window navigation: `Ctrl-w h` moves to the left
-window, `Ctrl-w l` to the right, and `Ctrl-w w` to the next, and that `:qa!`
-closes the file and moves on to the next one. When the user
-waits on work the agent runs in the background, the agent MUST suggest a
-`vimtutor` lesson to do in the meantime.
+Vim is how the user reads code and reviews the agent's latest commit locally.
+When the agent asks for a review, it MUST remind the user: `vim .` opens the
+directory tree, and `Ctrl-w h` and `Ctrl-w l` move between windows;
+`git difftool HEAD~1` shows the latest commit, and `:qa!` moves to the next
+file.
