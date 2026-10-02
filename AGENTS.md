@@ -23,3 +23,9 @@ skill, and MUST NOT rely on memory of the book.
 Spec Kit is a tool the agent uses to build defined work. When the work
 involves Spec Kit or `specify`, the agent MUST use the `speckit` skill, which
 brings Spec Kit current first, and MUST NOT rely on memory of it.
+
+Vim is how the user reads code and reviews the agent's latest commit locally.
+When the agent asks for a review, it MUST remind the user: `vim .` opens the
+directory tree, and `Ctrl-w h` and `Ctrl-w l` move between windows;
+`git difftool HEAD~1` shows the latest commit, and `:qa!` moves to the next
+file.

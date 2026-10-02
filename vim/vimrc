@@ -1,0 +1,17 @@
+" Keep Vim's defaults, which a vimrc otherwise turns off (:help defaults.vim).
+unlet! skip_defaults_vim
+source $VIMRUNTIME/defaults.vim
+
+" netrw, Vim's own file browser, as a tree in a sidebar (:Lexplore).
+let g:netrw_liststyle = 3
+let g:netrw_banner = 0
+let g:netrw_winsize = -30
+
+" vim <directory> opens that directory in the sidebar, not the whole window.
+" Once Vim has started (VimEnter), if its one argument is a directory, swap
+" the full-window tree for an empty buffer (enew) and open the directory in
+" the sidebar (Lexplore). ++nested lets netrw's own autocommands run.
+autocmd VimEnter * ++nested
+	\ if argc() == 1 && isdirectory(argv(0)) |
+	\   enew | execute 'Lexplore' fnameescape(argv(0)) |
+	\ endif

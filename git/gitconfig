@@ -1,0 +1,5 @@
+# Review diffs in Vim with Git's own vimdiff tool (git help difftool).
+[diff]
+	tool = vimdiff
+[difftool]
+	prompt = false
