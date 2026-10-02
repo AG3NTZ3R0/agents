@@ -26,4 +26,4 @@ since workflows in `specify/workflows/`, such as `guarded-sdd`, run Claude
 Code headless, where no one is present to approve a tool call. It leaves every
 other setting alone, and only warns when you chose another mode.
 
-It is safe to rerun. After that, ask the agent to update its environment.
+After that, ask the agent to update its environment.

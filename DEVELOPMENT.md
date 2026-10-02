@@ -6,8 +6,7 @@ These rules govern this repository and supersede every other practice in it.
 
 ### I. Every Repository
 
-`install` links `AGENTS.md` and every skill into every session, so each instruction and
-skill MUST hold in every repository the agent works in. An instruction MUST NOT assume a
+Each instruction and skill MUST hold in every repository the agent works in. An instruction MUST NOT assume a
 project's language, layout, or tooling unless it first checks for them, as the `speckit`
 instruction checks for `.specify/`. A project's own principles MUST stay in that project,
 not here.
@@ -15,9 +14,8 @@ not here.
 ### II. Agent-Agnostic
 
 Instructions MUST live in `AGENTS.md` and skills in `.agents/skills/`, conventions any
-coding agent can read. They MUST NOT depend on a feature only one coding agent has. What an
-agent requires beyond `AGENTS.md` and `.agents/skills/`, such as `CLAUDE.md`,
-`.claude/skills`, and the paths `install` writes to, MUST stay in links and `install`.
+coding agent can read. They MUST NOT depend on a feature only one coding agent has. What
+one agent requires beyond them, such as Claude Code's paths, MUST stay in `install`.
 
 ### III. Retrieve Upstream, Never Copy
 
@@ -30,8 +28,8 @@ fast-moving tools is already out of date.
 
 ### IV. Self-Contained Skills
 
-A skill MUST name its files relative to its own directory, so it works wherever `install`
-links it. A skill's executable steps MUST sit beside its `SKILL.md` and MUST be runnable
+A skill MUST name its files relative to its own directory, so it works wherever it is
+linked. A skill's executable steps MUST sit beside its `SKILL.md` and MUST be runnable
 with no arguments where the skill's purpose allows.
 
 ### V. Safe Installation
