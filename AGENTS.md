@@ -30,7 +30,7 @@ runs it from the terminal to build the habit. In a project that holds
 `handoff "<feature>"` starts a `guarded-sdd` run in its own worktree and
 returns at once; `inbox` lists the runs that need the user and opens a session
 in the one picked; `git worktree remove <dir>` clears a run whose branch is
-merged. The agent MUST NOT run `handoff` or `inbox` itself.
+merged.
 
 Vim is how the user reads code and reviews the agent's latest commit locally.
 When the agent asks for a review, it MUST remind the user: `vim .` opens the
