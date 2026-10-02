@@ -2,6 +2,16 @@
 unlet! skip_defaults_vim
 source $VIMRUNTIME/defaults.vim
 
+" Diff mode turns 'wrap' off, cutting long lines at the window's edge;
+" followwrap keeps it on, and linebreak wraps at a word, not mid-word.
+set diffopt+=followwrap
+set linebreak
+
+" vim -d, which git difftool runs, sets up its first window before reading
+" this file, so that window still loses 'wrap'; turn it back on once started.
+autocmd VimEnter * if &diff | call map(gettabinfo(1)[0].windows,
+	\ {_, id -> win_execute(id, 'setlocal wrap')}) | endif
+
 " netrw, Vim's own file browser, as a tree in a sidebar (:Lexplore).
 let g:netrw_liststyle = 3
 let g:netrw_banner = 0
