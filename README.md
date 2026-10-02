@@ -26,6 +26,11 @@ constitution, kept in that project.
 `specify/workflows/` holds Spec Kit workflows, which the `speckit` skill adds
 to a project.
 
+`handoff "<feature>"` starts a headless `guarded-sdd` run in a new git
+worktree beside the project, so several features build at once. `inbox` lists
+the runs that need you across every worktree and opens Claude in the one you
+pick. Once a run's branch is merged, `git worktree remove <dir>` clears it.
+
 ## License
 
 This repository is released under the [MIT License](LICENSE).

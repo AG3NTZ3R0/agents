@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+# Hands a feature to a headless guarded-sdd run in its own git worktree, so
+# several runs can build in one Spec Kit project at once. Returns at once;
+# inbox lists the run when it needs you.
+set -euo pipefail
+
+[ "$#" -eq 1 ] || { echo "usage: handoff \"<feature description>\"" >&2; exit 2; }
+[ -d .specify ] || { echo "not a Spec Kit project: no .specify/ here" >&2; exit 2; }
+
+# A worktree holds only what is committed, and the run commits as it goes.
+if [ -n "$(git status --porcelain)" ]; then
+	echo "uncommitted changes here would not reach the run; commit them first" >&2
+	exit 2
+fi
+
+top=$(git rev-parse --show-toplevel)
+dir="$top.worktrees/$(date +%Y%m%d-%H%M%S)"
+
+# Detached, so the git extension names the feature branch as it would here.
+git worktree add --quiet --detach "$dir" HEAD
+
+# Git's own directory for the worktree keeps the log out of the run's commits.
+log="$(git -C "$dir" rev-parse --absolute-git-dir)/handoff.log"
+(cd "$dir" && setsid nohup specify workflow run guarded-sdd --input spec="$1" \
+	</dev/null >"$log" 2>&1 &)
+
+echo "handed off to $dir"
+echo "log: $log"
