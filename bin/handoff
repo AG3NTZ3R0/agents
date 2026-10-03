@@ -1,11 +1,21 @@
 #!/usr/bin/env bash
-# Hands a feature to a headless guarded-sdd run in its own git worktree, so
-# several runs can build in one Spec Kit project at once. Returns at once;
-# inbox lists the run when it needs you.
+# Hands work to a headless Spec Kit workflow run in its own git worktree, so
+# several runs can build in one project at once. Returns at once; inbox lists
+# the run when it needs you.
+#
+# A Spec Kit project runs guarded-sdd unless --task is given. Any other git
+# project runs task, which needs no `specify init`.
 set -euo pipefail
 
-[ "$#" -eq 1 ] || { echo "usage: handoff \"<feature description>\"" >&2; exit 2; }
-[ -d .specify ] || { echo "not a Spec Kit project: no .specify/ here" >&2; exit 2; }
+usage() { echo "usage: handoff [--task] \"<description>\"" >&2; exit 2; }
+
+workflow=guarded-sdd
+if [ "${1:-}" = --task ]; then
+	workflow=task
+	shift
+fi
+[ "$#" -eq 1 ] || usage
+[ -d .specify ] || workflow=task
 
 # A worktree holds only what is committed, and the run commits as it goes.
 if [ -n "$(git status --porcelain)" ]; then
@@ -16,13 +26,29 @@ fi
 top=$(git rev-parse --show-toplevel)
 dir="$top.worktrees/$(date +%Y%m%d-%H%M%S)"
 
-# Detached, so the git extension names the feature branch as it would here.
-git worktree add --quiet --detach "$dir" HEAD
+# The task workflow runs from this clone, so the project carries none of it.
+# Outside a Spec Kit project, excluding .specify/ keeps the run's state out of
+# the project's commits without touching the project's .gitignore.
+if [ "$workflow" = task ]; then
+	source="$(dirname "$(readlink -f "$0")")/../specify/workflows/task/workflow.yml"
+	input=task
+	if [ ! -d .specify ]; then
+		exclude="$(git rev-parse --git-common-dir)/info/exclude"
+		mkdir -p "$(dirname "$exclude")"
+		grep -qxF .specify/ "$exclude" 2>/dev/null || echo .specify/ >>"$exclude"
+	fi
+	git worktree add --quiet -b "task/$(basename "$dir")" "$dir" HEAD
+else
+	source=guarded-sdd
+	input=spec
+	# Detached, so the git extension names the feature branch as it would here.
+	git worktree add --quiet --detach "$dir" HEAD
+fi
 
 # Git's own directory for the worktree keeps the log out of the run's commits.
 log="$(git -C "$dir" rev-parse --absolute-git-dir)/handoff.log"
-(cd "$dir" && setsid nohup specify workflow run guarded-sdd --input spec="$1" \
+(cd "$dir" && setsid nohup specify workflow run "$source" --input "$input=$1" \
 	</dev/null >"$log" 2>&1 &)
 
-echo "handed off to $dir"
+echo "handed off $workflow to $dir"
 echo "log: $log"

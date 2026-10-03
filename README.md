@@ -27,9 +27,12 @@ constitution, kept in that project.
 to a project.
 
 `handoff "<feature>"` starts a headless `guarded-sdd` run in a new git
-worktree beside the project, so several features build at once. `inbox` lists
-the runs that need you across every worktree and opens Claude in the one you
-pick.
+worktree beside the project, so several features build at once. `handoff
+--task "<task>"` runs `task` instead: one agent session that builds the task
+and commits it on a `task/` branch. A project without Spec Kit always runs
+`task`, from this clone, so it needs no `specify init` and commits nothing of
+Spec Kit's. `inbox` lists the runs that need you across every worktree and
+opens Claude in the one you pick.
 
 ## License
 
