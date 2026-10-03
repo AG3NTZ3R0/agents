@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+# Fails (exit 1) when the build step left work for a human: questions it
+# could not answer headless, or changes it did not commit.
+set -uo pipefail
+
+status=0
+
+if [ -f .specify/questions.md ]; then
+	cat .specify/questions.md
+	echo "unanswered questions in .specify/questions.md" >&2
+	status=1
+fi
+
+if [ -n "$(git status --porcelain -- . ':!.specify')" ]; then
+	git status --short -- . ':!.specify'
+	echo "uncommitted changes" >&2
+	status=1
+fi
+
+exit "$status"

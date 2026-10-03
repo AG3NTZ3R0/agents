@@ -1,0 +1,43 @@
+schema_version: "1.0"
+workflow:
+  id: "task"
+  name: "Task"
+  version: "0.1.0"
+  author: "AG3NTZ3R0"
+  description: "Builds a task in one headless agent session, stopping when it leaves work for a human"
+
+requires:
+  speckit_version: ">=1.1.0"
+
+inputs:
+  task:
+    type: string
+    required: true
+
+# Runs as a local file, so a project needs no `specify init`: Spec Kit keeps
+# only the run's state, in .specify/workflows/runs/.
+#
+# Requires "permissions": {"defaultMode": "auto"} in ~/.claude/settings.json,
+# for the reason guarded-sdd gives.
+steps:
+  - id: build
+    type: prompt
+    integration: claude
+    timeout: 7200
+    prompt: |
+      Build the task below in this repository, headless: no one can answer
+      you during the run.
+
+      Follow the repository's own conventions, run its tests and linters, and
+      commit the work in focused commits. Never commit .specify/.
+
+      If you cannot finish without a human decision, stop, and write the
+      questions to .specify/questions.md instead of guessing.
+
+      Task:
+
+      {{ inputs.task }}
+
+  - id: check-build
+    type: shell
+    run: bash "$SPECKIT_WORKFLOW_DIR/check"

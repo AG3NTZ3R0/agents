@@ -25,11 +25,12 @@ involves Spec Kit or `specify`, the agent MUST use the `speckit` skill, which
 brings Spec Kit current first, and MUST NOT rely on memory of it.
 
 Handoff is how the user gives defined work to headless agents, and the user
-runs it from the terminal to build the habit. In a project that holds
-`.specify/`, when a feature is ready to build, the agent MUST remind the user:
-`handoff "<feature>"` starts a `guarded-sdd` run in its own worktree and
-returns at once; `inbox` lists the runs that need the user and opens a session
-in the one picked.
+runs it from the terminal to build the habit. When a feature or task is ready
+to build, the agent MUST remind the user: `handoff "<feature>"` starts a
+headless run in its own worktree and returns at once, `guarded-sdd` in a
+project that holds `.specify/` and `task` in any other; `handoff --task`
+picks `task` in a Spec Kit project too; `inbox` lists the runs that need the
+user and opens a session in the one picked.
 
 Vim is how the user reads code and reviews the agent's latest commit locally.
 When the agent asks for a review, it MUST remind the user: `vim .` opens the
