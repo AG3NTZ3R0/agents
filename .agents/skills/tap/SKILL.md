@@ -2,14 +2,12 @@
 name: tap
 description: >-
   Use when the user asks to put a source on tap. Builds a skill that
-  retrieves the source the user names when it runs, so the agent works from
-  that source and not from memory.
+  retrieves the source the user names when it runs.
 ---
 
 # Tap
 
-A tap skill retrieves an authoritative source when it runs, because what the
-agent remembers was fixed at training and may be out of date. `template.md`,
+A tap skill retrieves an authoritative source when it runs. `template.md`,
 which sits beside this file, is the contract for every tap skill.
 
 The user names the source. The agent MUST NOT choose or replace it.
