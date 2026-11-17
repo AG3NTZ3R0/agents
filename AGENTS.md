@@ -21,8 +21,7 @@ a new branch, so tasks run in parallel without touching one another.
 
 Before the agent asks for a review, it MUST fetch the latest default branch
 from `origin` and rebase its branch onto it. It MUST bring a conflict it
-cannot resolve without a decision back to the user. It MUST push a rebased
-branch with `--force-with-lease`, never `--force`.
+cannot resolve without a decision back to the user.
 
 Before the agent starts a task, it MUST delete each local branch that has
 been merged into the default branch on `origin`, and remove that branch's
