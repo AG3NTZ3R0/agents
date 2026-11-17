@@ -14,6 +14,16 @@ Decisions that are the user's to make go back to the user.
 
 The agent MUST write plans in capitalized RFC 2119 key words.
 
+The agent MUST write replies to the user in ASD-STE100 Simplified Technical
+English: approved words, active voice, short sentences, and one instruction
+per sentence. When an approved word would change the meaning, the agent MUST
+keep the precise word. It MUST keep technical names, commands, file paths,
+and identifiers exactly as written.
+
+When the work depends on a standard, a vocabulary, or a project's own terms,
+the agent MUST work from that source and MUST NOT rely on memory of it. When
+it cannot retrieve the source, it MUST ask the user for it.
+
 The agent MUST use the `environment` skill to update or explain its own
 instructions and skills.
 
