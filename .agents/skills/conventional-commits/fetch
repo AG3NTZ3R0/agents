@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+# Prints the Conventional Commits 1.0.0 specification as Markdown, from the
+# source the website is built from. Numbers each list item and marks each
+# section heading with its anchor on the website, so a rule can be cited as
+# #specification rule 5. The version is not revised, so it is fetched once
+# and cached.
+set -euo pipefail
+
+[ $# -eq 0 ] || { echo "usage: fetch" >&2; exit 1; }
+
+source=https://raw.githubusercontent.com/conventional-commits/conventionalcommits.org/master/content/v1.0.0/index.md
+cache="${XDG_CACHE_HOME:-$HOME/.cache}/conventional-commits/v1.0.0.md"
+
+if [ ! -s "$cache" ]; then
+	page=$(curl -fsSL "$source") || { echo "could not fetch $source" >&2; exit 1; }
+	mkdir -p "$(dirname "$cache")"
+	{
+		echo "Conventional Commits 1.0.0, CC BY 3.0: https://www.conventionalcommits.org/en/v1.0.0/"
+		echo
+		awk '
+			NR == 1 && /^---$/ { front = 1; next }
+			front { if (/^---$/) front = 0; next }
+			/^```/ { code = !code }
+			!code && (/^$/ || /^#/) { n = 0 }
+			!code && /^## / {
+				anchor = tolower(substr($0, 4))
+				gsub(/[^a-z0-9 -]/, "", anchor)
+				gsub(/ /, "-", anchor)
+				$0 = $0 " {#" anchor "}"
+			}
+			!code && /^1\. / { sub(/^1\./, ++n ".") }
+			{ print }
+		' <<<"$page"
+	} >"$cache.tmp"
+	mv "$cache.tmp" "$cache"
+fi
+
+cat "$cache"
