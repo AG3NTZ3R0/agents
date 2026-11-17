@@ -19,7 +19,3 @@ changed.
 
 A change to `AGENTS.md` or to a skill's description takes effect in the next
 session, not the current one; the agent MUST say so when `sync` reports one.
-
-The agent MUST report any `specify` upgrade `install` performed or failed to
-perform. When it printed a changelog, the agent MUST name the versions the
-CLI moved between and summarize what those releases added or changed.

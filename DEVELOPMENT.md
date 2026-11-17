@@ -7,9 +7,8 @@ These rules govern this repository and supersede every other practice in it.
 ### I. Every Repository
 
 Each instruction and skill MUST hold in every repository the agent works in. An instruction MUST NOT assume a
-project's language, layout, or tooling unless it first checks for them, as the `speckit`
-instruction checks for `.specify/`. A project's own principles MUST stay in that project,
-not here.
+project's language, layout, or tooling unless it first checks for them. A project's own
+principles MUST stay in that project, not here.
 
 ### II. Agent-Agnostic
 
@@ -50,14 +49,6 @@ has uncommitted changes.
 
 Rationale: the environment is loaded into every session, so a destructive or partial run
 breaks every repository at once.
-
-### VI. Harnesses Are Tested Elsewhere
-
-This repository MUST NOT be initialized as a Spec Kit project. A Spec Kit workflow in
-`specify/workflows/` MUST be tested in a scratch Spec Kit project, never in this repository.
-
-Rationale: this repository builds the harness; running the harness on itself mixes its
-output into its source.
 
 ## Writing Conventions
 
