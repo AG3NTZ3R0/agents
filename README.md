@@ -4,10 +4,10 @@ The environment an agent carries into every repository it works in.
 See [INSTALLATION.md](INSTALLATION.md) to set it up and
 [DEVELOPMENT.md](DEVELOPMENT.md) to change it.
 
-## Phases
+## Plan and build
 
-Work moves from rubber duck, to plan, to build. The user decides what to build
-and why; the agent decides how, and reports what it did with evidence.
+Work is planned, then built. The user decides what to build and why; the
+agent decides how, and reports what it did with evidence.
 
 ## Sources
 
