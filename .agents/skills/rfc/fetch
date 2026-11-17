@@ -1,7 +1,18 @@
 #!/usr/bin/env bash
+# Prints an RFC by number, as the RFC Editor publishes it. An RFC is never
+# revised once published, so each one is fetched once and cached.
 set -euo pipefail
 
 n="${1-}"
 [[ "$n" =~ ^[0-9]+$ ]] || { echo "usage: fetch <rfc-number>" >&2; exit 1; }
 
-curl -fsS "https://www.rfc-editor.org/rfc/rfc$n.txt"
+url="https://www.rfc-editor.org/rfc/rfc$n.txt"
+cache="${XDG_CACHE_HOME:-$HOME/.cache}/rfc/rfc$n.txt"
+
+if [ ! -s "$cache" ]; then
+	mkdir -p "$(dirname "$cache")"
+	curl -fsS "$url" -o "$cache.tmp" || { rm -f "$cache.tmp"; echo "could not fetch $url" >&2; exit 1; }
+	mv "$cache.tmp" "$cache"
+fi
+
+cat "$cache"
