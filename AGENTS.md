@@ -14,6 +14,16 @@ The agent MUST write plans in capitalized RFC 2119 key words.
 The agent MUST use the `environment` skill to update or explain its own
 instructions and skills.
 
+## Delivery
+
+In a git repository, the agent MUST build each task in its own worktree, on
+a new branch, so tasks run in parallel without touching one another.
+
+Before the agent asks for a review, it MUST fetch the latest default branch
+from `origin` and rebase its branch onto it. It MUST bring a conflict it
+cannot resolve without a decision back to the user. It MUST push a rebased
+branch with `--force-with-lease`, never `--force`.
+
 ## Methods and tools
 
 Shape Up's pitch is how the user defines work before it is built. When the
