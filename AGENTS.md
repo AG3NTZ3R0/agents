@@ -55,6 +55,10 @@ Shape Up's pitch is how the user defines work before it is built. When the
 work involves shaping, appetite, or a pitch, the agent MUST use the `shapeup`
 skill, and MUST NOT rely on memory of the book.
 
+Conventional Commits is how the user writes commit messages. When the agent
+writes a commit message, it MUST use the `conventional-commits` skill, and
+MUST NOT rely on memory of the specification.
+
 Vim is how the user reads code and reviews the agent's latest commit locally.
 When the agent asks for a review, it MUST remind the user: `vim .` opens the
 directory tree, and `Ctrl-w h` and `Ctrl-w l` move between windows;
