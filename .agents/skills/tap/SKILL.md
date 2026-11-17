@@ -1,10 +1,9 @@
 ---
 name: tap
 description: >-
-  Use when the agent cannot retrieve a source it needs, or when the user says
-  the agent's knowledge of a topic is wrong or out of date. Builds a skill
-  that retrieves the source when it runs, so the source is on tap and the
-  agent's memory is not.
+  Use when the user asks to put a source on tap. Builds a skill that
+  retrieves the source the user names when it runs, so the agent works from
+  that source and not from memory.
 ---
 
 # Tap
@@ -13,19 +12,14 @@ A tap skill retrieves an authoritative source when it runs, because what the
 agent remembers was fixed at training and may be out of date. `template.md`,
 which sits beside this file, is the contract for every tap skill.
 
-## Offer
-
-The agent MUST offer to tap a source when it needs one it cannot retrieve,
-and MUST build the skill only after the user decides to. When the user says
-the agent's knowledge of a topic is wrong or out of date, that is the
-decision.
+The user names the source. The agent MUST NOT choose or replace it.
 
 ## Gather
 
-The agent MUST find each of these, asking the user one or two questions at a
-time for any it cannot find:
+The agent MUST find each of these from the source and the conversation, and
+MUST ask the user one or two questions at a time for any it cannot find:
 
-- **Source**: the authoritative source for the topic: a URL, or a local path
+- **Source**: where the source the user named lives: a URL, or a local path
   the user saved when the source sits behind a login or a form.
 - **Trigger**: the topics, tasks, or questions that depend on it.
 - **Retrieval**: the arguments `fetch` takes, such as none for an index or an

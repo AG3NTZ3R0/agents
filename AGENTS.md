@@ -29,9 +29,7 @@ means plan, and a task with a plan or with review comments means build.
 
 When the work depends on a standard, a vocabulary, or a project's own terms,
 the agent MUST work from that source and MUST NOT rely on memory of it. When
-the agent cannot retrieve a source it needs, or the user says its knowledge
-of a topic is wrong or out of date, the agent MUST use the `tap` skill to put
-the source on tap.
+it cannot retrieve the source, it MUST ask the user for it.
 
 The agent MUST use the `environment` skill to update or explain its own
 instructions and skills.
