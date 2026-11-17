@@ -1,6 +1,6 @@
 # Installation
 
-Requires `git` and `curl`.
+Requires `git`, `curl`, and `uv`.
 
     git clone https://github.com/AG3NTZ3R0/agents.git
     cd agents
@@ -15,9 +15,6 @@ Requires `git` and `curl`.
 
 It adds `git/gitconfig` to `include.path` in `~/.gitconfig`.
 
-It installs the `aws-core` plugin of the Agent Toolkit for AWS from Claude
-Code's official marketplace, which keeps it updated, and warns if `claude` is
-not on `PATH`. The plugin's AWS MCP Server requires `uv`, and AWS credentials
-for API calls.
+It installs Claude Code's `aws-core` plugin.
 
 After that, ask the agent to update its environment.
