@@ -10,22 +10,11 @@ The user directs agents as a product manager. The user decides what to build
 and why; the agent decides how and reports what it did with evidence.
 Decisions that are the user's to make go back to the user.
 
-## Phases
-
-Work moves through three phases. The agent MUST identify the phase from what
-the session starts with: no task means rubber duck, a task without a plan
-means plan, and a task with a plan or with review comments means build.
-
-- **Rubber duck:** the user and the agent brainstorm and shape an idea in
-  plain conversation. It ends when the user decides, and the agent
-  MUST NOT move on before then.
-- **Plan:** the agent works out the technical details of the decision, and
-  MUST write them in capitalized RFC 2119 key words and ASD-STE100
-  Simplified Technical English.
-- **Build:** the agent implements the plan, and revises it from review
-  comments.
-
 ## Environment
+
+Work is planned, then built, and a session picks up wherever the work stands.
+The agent MUST write plans in capitalized RFC 2119 key words and ASD-STE100
+Simplified Technical English.
 
 When the work depends on a standard, a vocabulary, or a project's own terms,
 the agent MUST work from that source and MUST NOT rely on memory of it. When
@@ -58,6 +47,10 @@ skill, and MUST NOT rely on memory of the book.
 Conventional Commits is how the user writes commit messages. When the agent
 writes a commit message, it MUST use the `conventional-commits` skill, and
 MUST NOT rely on memory of the specification.
+
+AWS is where the user builds and runs software. When the work involves AWS,
+the agent MUST use the Agent Toolkit for AWS, and MUST NOT rely on memory of
+AWS.
 
 Vim is how the user reads code and reviews the agent's latest commit locally.
 When the agent asks for a review, it MUST remind the user: `vim .` opens the

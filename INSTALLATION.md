@@ -1,6 +1,6 @@
 # Installation
 
-Requires `git` and `curl`.
+Requires `git`, `curl`, and `uv`.
 
     git clone https://github.com/AG3NTZ3R0/agents.git
     cd agents
@@ -14,5 +14,7 @@ Requires `git` and `curl`.
   reads that instead
 
 It adds `git/gitconfig` to `include.path` in `~/.gitconfig`.
+
+It installs Claude Code's `aws-core` plugin.
 
 After that, ask the agent to update its environment.
