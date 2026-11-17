@@ -9,8 +9,7 @@ description: >-
 
 The agent MUST copy `template.md`, which sits beside this file, to
 `.agents/skills/<name>/SKILL.md` in the current project, fill it from the
-source the user names, and write the `fetch` it describes. It MUST ask the
-user only for what the source does not answer.
+source the user names, and write the `fetch` it describes.
 
 The agent MUST run `fetch` once, then run `check` and fix the skill until it
 passes:
