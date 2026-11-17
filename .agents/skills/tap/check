@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+# Checks a tap skill's directory against template.md: a SKILL.md with the
+# parts every tap skill shares, an executable fetch beside it, and no
+# placeholder left unfilled.
+set -euo pipefail
+
+if [ $# -ne 1 ] || [ ! -d "$1" ]; then
+	echo "usage: check <skill-directory>" >&2
+	exit 2
+fi
+
+dir="${1%/}"
+skill="$dir/SKILL.md"
+ok=0
+fail() { echo "$1" >&2; ok=1; }
+
+[ -f "$skill" ] || { echo "no SKILL.md in $dir" >&2; exit 1; }
+[ -x "$dir/fetch" ] || fail "no executable fetch beside SKILL.md"
+
+name=$(sed -n 's/^name: *//p' "$skill" | head -1)
+[ "$name" = "$(basename "$(readlink -f "$dir")")" ] || fail "name '$name' differs from the directory's"
+
+# The description folds over lines, so it is read as one.
+description=$(sed -n '/^description:/,/^---$/p' "$skill" | tr '\n' ' ')
+grep -q 'Use ' <<<"$description" || fail "description does not say when to use the skill"
+grep -q 'Retrieves ' <<<"$description" || fail "description does not say what the skill retrieves"
+
+grep -qx '## Precedence' "$skill" || fail "no Precedence section"
+grep -q 'MUST NOT be the source of any' "$skill" || fail "Precedence does not rule out memory as a source"
+grep -q 'MUST cite' "$skill" || fail "Precedence does not say how to cite"
+
+if grep -n '{{' "$skill" >&2; then
+	fail "placeholders left unfilled"
+fi
+
+[ "$ok" -eq 0 ] && echo "$name matches template.md"
+exit "$ok"

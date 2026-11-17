@@ -55,6 +55,11 @@ Shape Up's pitch is how the user defines work before it is built. When the
 work involves shaping, appetite, or a pitch, the agent MUST use the `shapeup`
 skill, and MUST NOT rely on memory of the book.
 
+A tap skill puts an authoritative source on tap, so the agent retrieves it
+instead of relying on memory fixed at training. When the agent cannot
+retrieve a source it needs, or the user says its knowledge of a topic is
+wrong or out of date, the agent MUST use the `tap` skill.
+
 Vim is how the user reads code and reviews the agent's latest commit locally.
 When the agent asks for a review, it MUST remind the user: `vim .` opens the
 directory tree, and `Ctrl-w h` and `Ctrl-w l` move between windows;
