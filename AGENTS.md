@@ -24,6 +24,11 @@ from `origin` and rebase its branch onto it. It MUST bring a conflict it
 cannot resolve without a decision back to the user. It MUST push a rebased
 branch with `--force-with-lease`, never `--force`.
 
+Before the agent starts a task, it MUST delete each local branch that has
+been merged into the default branch on `origin`, and remove that branch's
+worktree. It MUST leave a worktree with uncommitted changes, and its branch,
+for the user.
+
 ## Methods and tools
 
 Shape Up's pitch is how the user defines work before it is built. When the
