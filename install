@@ -38,6 +38,25 @@ else
 	echo "warning: claude is not on PATH, so the aws-core plugin is not installed." >&2
 fi
 
+# Claude Code writes ~/.claude/settings.json too, so this repo's settings are
+# merged in: a list gains what it lacks, and a value already set is kept.
+settings="$HOME/.claude/settings.json"
+[ -e "$settings" ] || echo '{}' >"$settings"
+merged="$(jq -s '
+	def merge($a; $b):
+		if ($a | type) == "object" and ($b | type) == "object" then
+			reduce ($b | keys_unsorted[]) as $k ($a; .[$k] = merge($a[$k]; $b[$k]))
+		elif ($a | type) == "array" and ($b | type) == "array" then $a + ($b - $a)
+		elif $a == null then $b
+		else $a end;
+	merge(.[0]; .[1])' "$settings" "$here/claude/settings.json")"
+if [ "$merged" = "$(jq . "$settings")" ]; then
+	echo "already merged: $settings"
+else
+	printf '%s\n' "$merged" >"$settings"
+	echo "merged: $here/claude/settings.json into $settings"
+fi
+
 link "$here/vim/vimrc" "$HOME/.vim/vimrc"
 
 # Vim reads ~/.vimrc before ~/.vim/vimrc (:help vimrc), so the user decides.
