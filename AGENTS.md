@@ -29,7 +29,9 @@ means plan, and a task with a plan or with review comments means build.
 
 When the work depends on a standard, a vocabulary, or a project's own terms,
 the agent MUST work from that source and MUST NOT rely on memory of it. When
-it cannot retrieve the source, it MUST ask the user for it.
+the agent cannot retrieve a source it needs, or the user says its knowledge
+of a topic is wrong or out of date, the agent MUST use the `tap` skill to put
+the source on tap.
 
 The agent MUST use the `environment` skill to update or explain its own
 instructions and skills.
@@ -54,11 +56,6 @@ for the user.
 Shape Up's pitch is how the user defines work before it is built. When the
 work involves shaping, appetite, or a pitch, the agent MUST use the `shapeup`
 skill, and MUST NOT rely on memory of the book.
-
-A tap skill puts an authoritative source on tap, so the agent retrieves it
-instead of relying on memory fixed at training. When the agent cannot
-retrieve a source it needs, or the user says its knowledge of a topic is
-wrong or out of date, the agent MUST use the `tap` skill.
 
 Vim is how the user reads code and reviews the agent's latest commit locally.
 When the agent asks for a review, it MUST remind the user: `vim .` opens the
