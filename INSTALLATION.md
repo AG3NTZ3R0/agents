@@ -15,4 +15,9 @@ Requires `git` and `curl`.
 
 It adds `git/gitconfig` to `include.path` in `~/.gitconfig`.
 
+It installs the `aws-core` plugin of the Agent Toolkit for AWS from Claude
+Code's official marketplace, which keeps it updated, and warns if `claude` is
+not on `PATH`. The plugin's AWS MCP Server requires `uv`, and AWS credentials
+for API calls.
+
 After that, ask the agent to update its environment.

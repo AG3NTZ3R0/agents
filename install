@@ -30,6 +30,14 @@ for skill in "$here"/.agents/skills/*/; do
 	link "${skill%/}" "$HOME/.claude/skills/$(basename "$skill")"
 done
 
+# Claude Code records the plugin in its own settings and keeps it updated.
+# --marketplace adds the official marketplace before the first session does.
+if command -v claude >/dev/null; then
+	claude plugin install aws-core --marketplace anthropics/claude-plugins-official
+else
+	echo "warning: claude is not on PATH, so the aws-core plugin is not installed." >&2
+fi
+
 link "$here/vim/vimrc" "$HOME/.vim/vimrc"
 
 # Vim reads ~/.vimrc before ~/.vim/vimrc (:help vimrc), so the user decides.
