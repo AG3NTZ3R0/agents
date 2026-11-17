@@ -19,11 +19,9 @@ means plan, and a task with a plan or with review comments means build.
 - **Rubber duck:** the user and the agent spitball, brainstorm, and shape an
   idea in plain conversation. It ends when the user decides, and the agent
   MUST NOT move on before then.
-- **Plan:** the agent works out the technical details of the decision. It
-  MUST write them in capitalized RFC 2119 key words and in ASD-STE100
-  Simplified Technical English, but MUST keep the precise word where an
-  approved word would change the meaning, and MUST keep technical names,
-  commands, file paths, and identifiers exactly as written.
+- **Plan:** the agent works out the technical details of the decision, and
+  MUST write them in capitalized RFC 2119 key words and ASD-STE100
+  Simplified Technical English.
 - **Build:** the agent implements the plan, and revises it from review
   comments.
 
