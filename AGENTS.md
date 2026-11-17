@@ -50,7 +50,8 @@ MUST NOT rely on memory of the specification.
 
 AWS is where the user builds and runs software. When the work involves AWS,
 the agent MUST use the Agent Toolkit for AWS, and MUST NOT rely on memory of
-AWS.
+AWS. The agent MUST only read from AWS. A read-only IAM role enforces this as
+defense in depth.
 
 Vim is how the user reads code and reviews the agent's latest commit locally.
 When the agent asks for a review, it MUST remind the user: `vim .` opens the

@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "defaultMode": "auto",
+    "ask": [
+      "mcp__plugin_aws-core_aws-mcp__*",
+      "Bash(aws *)"
+    ]
+  }
+}
