@@ -16,8 +16,8 @@ Work moves through three phases. The agent MUST identify the phase from what
 the session starts with: no task means rubber duck, a task without a plan
 means plan, and a task with a plan or with review comments means build.
 
-- **Rubber duck:** the user and the agent spitball, brainstorm, and shape an
-  idea in plain conversation. It ends when the user decides, and the agent
+- **Rubber duck:** the user and the agent brainstorm and shape an idea in
+  plain conversation. It ends when the user decides, and the agent
   MUST NOT move on before then.
 - **Plan:** the agent works out the technical details of the decision, and
   MUST write them in capitalized RFC 2119 key words and ASD-STE100
